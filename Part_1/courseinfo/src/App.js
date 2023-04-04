@@ -3,20 +3,20 @@ const App = () => {
 		course: {
 			name: 'Half Stack Applicaion Development'
 		},
-		part: {
-			one: {
+		part: [
+			{
 				name: 'Fundamentals of React',
-				exercise: 10,
+				exercises: 10,
 			},
-			two: {
+			{
 				name: 'Using Props to pass Data',
-				exercise: 7
+				exercises: 7
 			},
-			three: {
+			{
 				name: 'State of a component',
-				exercise: 14
+				exercises: 14
 			}
-		}
+		]
 	}
 
 
@@ -41,9 +41,9 @@ const App = () => {
 	const Content = () => {
 		return (
 			<>
-				<Part name={info.part.one.name} exs={info.part.one.exercise}/>
-				<Part name={info.part.two.name} exs={info.part.two.exercise}/>
-				<Part name={info.part.three.name} exs={info.part.three.exercise}/>
+				<Part name={info.part[0].name} exs={info.part[0].exercises}/>
+				<Part name={info.part[1].name} exs={info.part[1].exercises}/>
+				<Part name={info.part[2].name} exs={info.part[2].exercises}/>
 			</>
 		)
 	}
@@ -61,7 +61,7 @@ const App = () => {
 		<div>
 			<Header course={info.course.name} />
 			<Content />
-			<Total one={info.part.one.exercise} two={info.part.two.exercise} three={info.part.three.exercise}/>
+			<Total one={info.part[0].exercises} two={info.part[1].exercises} three={info.part[2].exercises}/>
 		</div>
 	)
 }
