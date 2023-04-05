@@ -13,11 +13,18 @@ const App = () => {
 	]
 
 	const [ selected, setSelected ] = useState(0)
-
+	const [ votes, setVotes ] = useState(Array(8).fill(0))
+	
 	const handleClick = () => {
 		let rn = Math.floor(Math.random() * (7 + 1))
-		console.log('Generated Number is: ', rn)
 		setSelected(rn)
+	}
+	
+	const handleVote = () => {
+		const updatedVotes = [...votes]
+		updatedVotes[selected] += 1
+		console.log(updatedVotes)
+		setVotes(updatedVotes)
 	}
 
 	return (
@@ -25,6 +32,11 @@ const App = () => {
 			<p>
 				{anecdotes[selected]}
 			</p>
+			<p>
+				No: of Votes: {votes[selected]}
+			</p>
+			<button onClick={handleVote}>Vote</button>
+			&nbsp;
 			<button onClick={handleClick}>Next Anecdote</button>
 		</div>
 	)
