@@ -1,5 +1,32 @@
 import { useState } from "react";
 
+const Heading = ({ text }) => {
+	return (
+		<>
+			<h2>{text}</h2>
+		</>
+	)
+}
+
+const AnecMostVoted = ({ anecdotes, votes }) => {
+	const highestVote = Math.max(...votes)
+	const highestVotedIndex = votes.indexOf(highestVote);
+	const hightestAnecdote = anecdotes[highestVotedIndex]
+	
+	if (highestVote === 0 ) {
+		return (
+			<p>No Votes Available</p>
+		)
+	}
+
+	return (
+		<div>
+			<p>{hightestAnecdote}</p>
+			Highest Number of Votes: {highestVote}
+		</div>
+	)
+}
+
 const App = () => {
 	const anecdotes = [
 		'If It Hurts, Do it more often',
@@ -29,15 +56,19 @@ const App = () => {
 
 	return (
 		<div>
+			<Heading text='Anecdotes of the Day' />
 			<p>
 				{anecdotes[selected]}
 			</p>
 			<p>
-				No: of Votes: {votes[selected]}
+				No. of Votes: {votes[selected]}
 			</p>
 			<button onClick={handleVote}>Vote</button>
 			&nbsp;
 			<button onClick={handleClick}>Next Anecdote</button>
+			
+			<Heading text='Anecdote with Most Votes' />
+			<AnecMostVoted anecdotes={anecdotes} votes={votes} />
 		</div>
 	)
 }
