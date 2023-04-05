@@ -26,12 +26,14 @@ const Stats = (props) => {
 
 	return (
 		<table>
-			<StatsDisplay text='Good' value={props.good} />
-			<StatsDisplay text='Neutral' value={props.neutral} />
-			<StatsDisplay text='Bad' value={props.bad} />
-			<StatsDisplay text='Total' value={props.total} />
-			<StatsDisplay text='Average' value={props.average} />
-			<StatsDisplay text='Positive' value={props.positive} sign='%'/>
+			<tbody>
+				<StatsDisplay text='Good' value={props.good} />
+				<StatsDisplay text='Neutral' value={props.neutral} />
+				<StatsDisplay text='Bad' value={props.bad} />
+				<StatsDisplay text='Total' value={props.total} />
+				<StatsDisplay text='Average' value={props.average} />
+				<StatsDisplay text='Positive' value={props.positive} sign='%'/>
+			</tbody>
 		</table>
 	)
 }
@@ -42,17 +44,14 @@ const App = () => {
 	const [bad, setBad] = useState(0)
 	
 	const handleGood = () => {
-		console.log('Good is clicked')
 		setGood(good + 1)
 	}
 	
 	const handleNeutral = () => {
-		console.log('Neutral is clicked')
 		setNeutral(neutral + 1)
 	}
 
 	const handleBad = () => {
-		console.log('Bad is clicked')
 		setBad(bad + 1)
 	}
 	
