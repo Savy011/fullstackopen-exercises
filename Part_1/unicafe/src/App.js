@@ -10,9 +10,29 @@ const Button = ({ handleClick, text }) => {
 
 const StatsDisplay = (props) => {
 	return (
-		<>
-		<p>{props.text}: {props.value}{props.sign}</p>
-		</>
+		<tr>
+			<td>{props.text}</td> 
+			<td>{props.value}{props.sign}</td>
+		</tr>
+	)
+}
+
+const Stats = (props) => {
+	if (props.good === 0 && props.neutral === 0 && props.bad === 0) {
+		return (
+			<p>No Feedback Given</p>
+		)
+	}
+
+	return (
+		<table>
+			<StatsDisplay text='Good' value={props.good} />
+			<StatsDisplay text='Neutral' value={props.neutral} />
+			<StatsDisplay text='Bad' value={props.bad} />
+			<StatsDisplay text='Total' value={props.total} />
+			<StatsDisplay text='Average' value={props.average} />
+			<StatsDisplay text='Positive' value={props.positive} sign='%'/>
+		</table>
 	)
 }
 
@@ -52,13 +72,8 @@ const App = () => {
 
 			<h1>Statistics</h1>
 			
-			<StatsDisplay text='Good' value={good} />
-			<StatsDisplay text='Neutral' value={neutral} />
-			<StatsDisplay text='Bad' value={bad} />
-			<StatsDisplay text='Total' value={total} />
-			<StatsDisplay text='Average' value={average} />
-			<StatsDisplay text='Positive' value={positive} sign='%' />
-		</div>
+			<Stats good={good} neutral={neutral} bad={bad} total={total} average={average} positive={positive}/>
+			</div>
 	)
 }
 
