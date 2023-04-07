@@ -2,7 +2,7 @@ const Course = ({ course }) => {
 	const Header = ({ name }) => {
 		return (
 			<>
-				<h1>{name}</h1>
+				<h2>{name}</h2>
 			</>
 		)
 	}
@@ -16,16 +16,22 @@ const Course = ({ course }) => {
 	const Content = () => {
 		return (
 			<>
-				{course.parts.map((part) => 
-					<Part name={part.name} exs={part.exercises}/>
+				{course.parts.map((part, i) => 
+					<Part key={i} name={part.name} exs={part.exercises}/>
 				)}
 			</>
 		)
 	}
+
+	const total = course.parts.reduce((p, c) => {
+		return p + c.exercises
+	}, 0)
+
 	return (
 		<div>
 			<Header name={course.name}/>
 		<Content />
+		<p>Total Number of Exercises: {total}</p>
 		</div>
 	)
 }
@@ -46,6 +52,10 @@ const App = () => {
 			{
 				name: 'State of a component',
 				exercises: 14
+			},
+			{
+				name: 'Redux',
+				exercises: 11
 			}
 		]
 	}
