@@ -23,7 +23,6 @@ const App = () => {
 	const addContact= (event) => {
 		event.preventDefault()
 		const contactObject = {
-			id: contacts.length + 1,
 			name: newPerson,
 			number: newNumber
 		}
@@ -35,10 +34,15 @@ const App = () => {
 			setNewNumber('')
 			return alert(`${newPerson} is Already in the Phonebook`)
 		}
+		
+		axios
+			.post('http://localhost:3001/contacts', contactObject)
+			.then(response => {
 
-		setContacts(contacts.concat(contactObject))
-		setNewPerson('')
-		setNewNumber('')
+				setContacts(contacts.concat(response.data))
+				setNewPerson('')
+				setNewNumber('')
+			})
 	}
 	 const peopleToShow = searchFilter 
 		? contacts.filter(item => item.name.toLowerCase().search(searchFilter.toLowerCase()) !== -1)
