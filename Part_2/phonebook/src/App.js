@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import Content from "./components/Content";
 import Filter from "./components/Filter";
 import ContactForm from "./components/Form";
+import contactServices from "./services/contacts"
 
 const App = () => {
 	const [ contacts, setContacts ] = useState([])
@@ -11,10 +12,10 @@ const App = () => {
 	const [ searchFilter, setSearchFilter] = useState('')
 	
 	const hook = () => {
-		axios
-			.get('http://localhost:3001/contacts')
-			.then(response => {
-				setContacts(response.data)
+		contactServices
+			.getAll()
+			.then(allContacts => {
+				setContacts(allContacts)
 			})
 	}
 
@@ -35,11 +36,10 @@ const App = () => {
 			return alert(`${newPerson} is Already in the Phonebook`)
 		}
 		
-		axios
-			.post('http://localhost:3001/contacts', contactObject)
-			.then(response => {
-
-				setContacts(contacts.concat(response.data))
+		contactServices
+			.add(contactObject)
+			.then(newContact => {
+				setContacts(contacts.concat(newContact))
 				setNewPerson('')
 				setNewNumber('')
 			})
