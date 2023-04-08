@@ -1,4 +1,3 @@
-import axios from "axios";
 import { useEffect, useState } from "react";
 import Content from "./components/Content";
 import Filter from "./components/Filter";
@@ -59,6 +58,19 @@ const App = () => {
 	const handleSearchFilter = (event) => {
 		setSearchFilter(event.target.value)
 	}
+	
+	const handleDelete = (id) => {
+		const removePerson = contacts.find(item => item.id === id)
+		console.log(removePerson.name)
+
+		if (window.confirm(`Delete Contact for ${removePerson.name}`)) {
+			contactServices
+				.obliterate(id)
+				.then(response => {
+					setContacts(contacts.filter(item => item.id !== id))
+				})
+		}
+	}
 
 	return (
 		<div>
@@ -69,7 +81,7 @@ const App = () => {
 			<ContactForm addContact={addContact} newPerson={newPerson} handleNameChange={handleNameChange} newNumber={newNumber} handleNumberChange={handleNumberChange} />	
 			
 			<h2>Contacts</h2>
-			<Content peopleToShow={peopleToShow}/>
+			<Content peopleToShow={peopleToShow} handleDelete={handleDelete}/>
 		</div>
 	)
 }
