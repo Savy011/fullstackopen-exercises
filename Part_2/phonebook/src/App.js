@@ -1,49 +1,59 @@
 import { useState } from "react";
 
 const App = () => {
-	const [ persons, setPersons ] = useState([
+	const [ contacts, setContacts ] = useState([
 		{
 			id: 1,
-			name: 'Savy'
+			name: 'Savy',
+			number: '9876543210'
 		}
 	])
 	const [ newPerson, setNewPerson] = useState('')
+	const [ newNumber, setNewNumber] = useState('')
 	
-	const addPerson = (event) => {
+	const addContact= (event) => {
 		event.preventDefault()
-		const personObject = {
-			id: persons.length + 1,
-			name: newPerson
+		const contactObject = {
+			id: contacts.length + 1,
+			name: newPerson,
+			number: newNumber
 		}
 		let dupeCheck = false
-		dupeCheck = persons.find((item) => { return item.name.toLowerCase() === newPerson.toLowerCase() })
+		dupeCheck = contacts.find((item) => { return item.name.toLowerCase() === newPerson.toLowerCase() })
 
 		if (dupeCheck) {
 			setNewPerson('')
+			setNewNumber('')
 			return alert(`${newPerson} is Already in the Phonebook`)
 		}
 		else {
-			setPersons(persons.concat(personObject))
+			setContacts(contacts.concat(contactObject))
 			setNewPerson('')
+			setNewNumber('')
 		}
 	}
 
 
-	const handleChange = (event) => {
+	const handleNameChange = (event) => {
 		setNewPerson(event.target.value)
 	}
 	
+	const handleNumberChange = (event) => {
+		setNewNumber(event.target.value)
+	}
+
 	return (
 		<div>
 			<h2>PhoneBook</h2>
-			<form onSubmit={addPerson}>
-				<div>Name: <input value={newPerson} onChange={handleChange}/></div>
+			<form onSubmit={addContact}>
+				<p>Name: <input value={newPerson} onChange={handleNameChange}/></p>
+				<p>Phone No.: <input value={newNumber} onChange={handleNumberChange}/></p>
 				<div><button type='submit'>Add</button></div>
 			</form>
 			
 			<h2>Contacts</h2>
-			{persons.map((item, i) => 
-				<p key={i}>{item.name}</p>
+			{contacts.map((item) => 
+				<p key={item.id}>{item.name} {item.number}</p>
 			)}	
 		</div>
 	)
