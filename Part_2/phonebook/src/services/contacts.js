@@ -16,7 +16,16 @@ const add = (newContact) => {
 
 const obliterate = (id) => {
 	const request = axios.delete(`${baseUrl}/${id}`)
+
 	return request.then(response => response.data)
 }
 
-export default { getAll, add, obliterate }
+const update = ( id, value ) => {
+	const request = axios.put(`${baseUrl}/${id}`, value)
+	
+	return request.then(response => response.data)
+}
+
+const contactServices = { getAll, add, obliterate, update }
+
+export default contactServices

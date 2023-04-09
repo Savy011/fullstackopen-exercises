@@ -9,7 +9,7 @@ const App = () => {
 	const [ newPerson, setNewPerson] = useState('')
 	const [ newNumber, setNewNumber] = useState('')
 	const [ searchFilter, setSearchFilter] = useState('')
-	
+
 	const hook = () => {
 		contactServices
 			.getAll()
@@ -26,22 +26,34 @@ const App = () => {
 			name: newPerson,
 			number: newNumber
 		}
-		let dupeCheck = false
-		dupeCheck = contacts.find((item) => { return item.name.toLowerCase() === newPerson.toLowerCase() })
-
-		if (dupeCheck) {
-			setNewPerson('')
-			setNewNumber('')
-			return alert(`${newPerson} is Already in the Phonebook`)
-		}
 		
-		contactServices
-			.add(contactObject)
-			.then(newContact => {
-				setContacts(contacts.concat(newContact))
-				setNewPerson('')
-				setNewNumber('')
-			})
+		const existingCheck = contacts.filter(item => item.name.toLowerCase().trim() === newPerson.toLowerCase().trim())
+		
+		if (existingCheck.length > 0) {
+			const confirmation = window.confirm(`${newPerson} Already Exists...\nUpdate their Number?`)
+			
+			const existingContact = existingCheck[0]
+
+			if (confirmation) {
+				const updatedContact = { ...existingContact, number: newNumber }
+
+				contactServices
+					.update(updatedContact.id, updatedContact)
+					.then(response => {
+						setContacts(contacts.map(item => item.id !== response.id ? item : response))
+						setNewPerson('')
+						setNewNumber('')
+					})
+			}
+		} else {
+			contactServices
+				.add(contactObject)
+				.then(newContact => {
+					setContacts(contacts.concat(newContact))
+					setNewPerson('')
+					setNewNumber('')
+				})
+		}
 	}
 	 const peopleToShow = searchFilter 
 		? contacts.filter(item => item.name.toLowerCase().search(searchFilter.toLowerCase()) !== -1)
@@ -61,7 +73,6 @@ const App = () => {
 	
 	const handleDelete = (id) => {
 		const removePerson = contacts.find(item => item.id === id)
-		console.log(removePerson.name)
 
 		if (window.confirm(`Delete Contact for ${removePerson.name}`)) {
 			contactServices
@@ -71,7 +82,7 @@ const App = () => {
 				})
 		}
 	}
-
+	
 	return (
 		<div>
 			<h1>PhoneBook</h1>
