@@ -49,6 +49,16 @@ const App = () => {
 						setNewPerson('')
 						setNewNumber('')
 					})
+					.catch(err => {
+						setMessage(`Error: ${err.response.statusText}`)
+						setMessageType("delete")
+						setNewPerson('')
+						setNewNumber('')
+						setContacts(contacts.filter(item => item.id !== updatedContact.id))
+						setTimeout(() => {
+							setMessage(null)
+						}, 3500)
+					})
 				setMessage(`${newPerson}'s Contact was Updated!`)
 				setMessageType("add")
 				setTimeout(() => {
@@ -62,6 +72,14 @@ const App = () => {
 					setContacts(contacts.concat(newContact))
 					setNewPerson('')
 					setNewNumber('')
+				})
+				.catch(err => {
+					setMessage(err.response.StatusText)
+					setNewPerson('')
+					setNewNumber('')
+					setTimeout(() => {
+						setMessage(null)
+					}, 3500)
 				})
 			setMessage(`${newPerson} was added to the Contacts!!`)
 			setMessageType("add")
