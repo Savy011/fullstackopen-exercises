@@ -1,7 +1,10 @@
 import { useEffect, useState } from "react";
+
 import Content from "./components/Content";
 import Filter from "./components/Filter";
 import ContactForm from "./components/Form";
+import Notification from "./components/Notification";
+
 import contactServices from "./services/contacts"
 
 const App = () => {
@@ -9,6 +12,8 @@ const App = () => {
 	const [ newPerson, setNewPerson] = useState('')
 	const [ newNumber, setNewNumber] = useState('')
 	const [ searchFilter, setSearchFilter] = useState('')
+	const [ message, setMessage] = useState(null)
+	const [ messageType, setMessageType] = useState("")
 
 	const hook = () => {
 		contactServices
@@ -44,6 +49,11 @@ const App = () => {
 						setNewPerson('')
 						setNewNumber('')
 					})
+				setMessage(`${newPerson}'s Contact was Updated!`)
+				setMessageType("add")
+				setTimeout(() => {
+					setMessage(null)
+				}, 3500)
 			}
 		} else {
 			contactServices
@@ -53,6 +63,11 @@ const App = () => {
 					setNewPerson('')
 					setNewNumber('')
 				})
+			setMessage(`${newPerson} was added to the Contacts!!`)
+			setMessageType("add")
+			setTimeout(() => {
+				setMessage(null)
+			}, 3500)
 		}
 	}
 	 const peopleToShow = searchFilter 
@@ -80,12 +95,20 @@ const App = () => {
 				.then(response => {
 					setContacts(contacts.filter(item => item.id !== id))
 				})
+			setMessage(`${removePerson.name} was Deleted!!`)
+			setMessageType("delete")
+			setTimeout(() => {
+				setMessage(null)
+			}, 3500)
 		}
 	}
 	
 	return (
 		<div>
 			<h1>PhoneBook</h1>
+			
+			<Notification className={messageType} message={message}/>
+
 			<Filter searchFilter={searchFilter} handleSearchFilter={handleSearchFilter}/>
 
 			<h2>Add a Contact</h2>
