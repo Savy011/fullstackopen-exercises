@@ -22,14 +22,12 @@ const App = () => {
 
 	const handleSearch = (event) => {
 		setSearch(event.target.value)
+		setDisplay(false)
 	}
 
 	const handleClick = (country) => {
-		console.log('Clicked')
-		console.log(country)
 		setDisplayCountry(country)
-		setDisplay(current => !current)
-		console.log(displayCountry)
+		setDisplay(true)
 	}
 
 	return (
@@ -41,7 +39,7 @@ const App = () => {
 			<br />
 
 			{searchResults.length > 10 && <p>Too Many Results to Show, Please specify query</p>}
-			{searchResults.length <10 && searchResults.length > 1 && searchResults.map(country => (
+			{searchResults.length < 10 && searchResults.length > 1 && searchResults.map(country => (
 				<div>
 				<li key={country.name}>
 					{country.name}
@@ -52,7 +50,6 @@ const App = () => {
 			))}
 			{searchResults.length === 1 && (
 				<div>
-					{console.log('Entering Details')}
 					<Details country={searchResults[0]} />
 				</div>
 			)}
