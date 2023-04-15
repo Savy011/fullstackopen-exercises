@@ -67,12 +67,13 @@ app.delete('/api/persons/:id', (request, response) => {
 
 app.post('/api/persons', (request, response) => {
 	const body = request.body
-	
+
 	if (!body.name) {
 		response.status(400).json({
-			error: 'Missing Name'
+			Error: 'Missing Name'
 		})
 	}
+	
 
 	const person = {
 		name: body.name,
@@ -80,8 +81,16 @@ app.post('/api/persons', (request, response) => {
 		id: generateId()
 	}
 	
-	persons = persons.concat(person)
-	response.json(persons)
+	const dupeCheck = persons.filter(item => item.name.toLowerCase() === person.name.toLowerCase())
+
+	if (dupeCheck.length > 0) {
+		response.status(400).json({
+			Error: 'Name must be Unique'
+		})
+	} else {
+		persons = persons.concat(person)
+		response.json(persons)
+	}
 })
 
 PORT = 3001
