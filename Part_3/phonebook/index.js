@@ -48,10 +48,6 @@ const generateId = () => {
 	return genId
 }
 
-app.get('/', (request, response) => {
-	response.send('<h1>Herro Everynyan!!</h1>')
-})
-
 app.get('/info', (request, response) => {
 	const currentTime = new Date()
 
@@ -104,12 +100,11 @@ app.post('/api/persons', (request, response) => {
 			Error: 'Name must be Unique'
 		})
 	} else {
-		persons = persons.concat(person)
-		response.json(persons)
+		response.json(person)
 	}
 })
 
-PORT = 3001
+PORT = process.env.PORT || 8080
 app.listen(PORT, () => {
 	console.log(`Server running at Port ${PORT}`)
 })
