@@ -4,7 +4,10 @@ import axios from "axios"
 const WeatherData = ({ country }) => {
 	const baseURL = 'http://api.openweathermap.org/data/2.5/weather'
 	const api_key = process.env.REACT_APP_API_KEY
-	const [ weather, setWeather ] = useState([])
+	const [ temp, setTemp ] = useState('')
+	const [ weather, setWeather ] = useState('')
+	const [ windSpeed, setWindSpeed ] = useState('')
+	const [ weatherIcon, setWeatherIcon ] = useState('')
 	const city = country.capital[0].replace(/ /g,"+");
 
 	useEffect(() => {
@@ -12,21 +15,23 @@ const WeatherData = ({ country }) => {
 		axios
 			.get(`${baseURL}?q=${city}&units=metric&appid=${api_key}`)
 			.then(response => {
-				setWeather(Object.assign(weather, response.data))
-				console.log("Response recieved", weather)
+				setTemp(response.data.main.temp)
+				setWeather(response.data.weather[0].main)
+				setWeatherIcon(response.data.weather[0].icon)
+				setWindSpeed(response.data.wind.speed)
 			})
-	}, [city])
-
-	if (weather.name === undefined) {
-		return <p>Loading...</p>
+	}, [ city ])
+	
+	if (temp === '') {
+		return <p>Loading....</p>
 	}
 
 	return (
 		<div>
-			<p><b>Temperature:</b> {weather.main.temp}<sup>o</sup>C</p>
-			<p><b>Weather:</b> {weather.weather[0].main}</p>
-			<p><b>Wind:</b> {weather.wind.speed}m/s</p>
-			<img alt={weather.weather[0].main} src={`https://openweathermap.org/img/wn/${weather.weather[0].icon}@2x.png`}/>
+			<p><b>Temperature:</b> {temp} <sup>o</sup>C</p>
+			<p><b>Weather:</b> {weather}</p>
+			<p><b>Wind:</b> {windSpeed}m/s</p>
+			<img alt={weather} src={`https://openweathermap.org/img/wn/${weatherIcon}@2x.png`}/>
 			
 		</div>
 	)
