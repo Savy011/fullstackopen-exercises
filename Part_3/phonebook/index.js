@@ -8,6 +8,8 @@ morgan.token('content',function getContent (req){
 })
 
 app.use(express.json())
+app.use(express.static('build'))
+
 app.use(morgan(function (tokens, req, res) {
 	return [
 		tokens.method(req, res),
@@ -100,6 +102,7 @@ app.post('/api/persons', (request, response) => {
 			Error: 'Name must be Unique'
 		})
 	} else {
+		persons = persons.concat(person)
 		response.json(person)
 	}
 })
