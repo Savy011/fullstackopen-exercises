@@ -5,6 +5,19 @@ const cors = require('cors')
 const Person = require('./models/mongo')
 
 const app = express()
+const errorHandler = (error, request, response, next) => {
+	console.error(error.message)
+
+	if (error.name.toLowerCase() === 'casterror') {
+		return response.status(400).send({ error: 'Malformatted Id'})
+	}
+
+	next(error)
+}
+const unknownEndpoint = (request, response) => {
+	return response.status(404).send({ error: 'Unknown Endpoint' })
+}
+
 
 morgan.token('content',function getContent (req){
 	return JSON.stringify(req.body)
@@ -32,25 +45,35 @@ app.get('/info', (request, response) => {
 		<h4>${currentTime}</h4>`)
 })
 
-app.get('/api/persons', (request, response) => {
-	Person.find({}).then(person => {
-		response.json(person)
-	})
+app.get('/api/persons', (request, response, next) => {
+	Person.find({})
+		.then(person => {
+			response.json(person)
+		})
+		.catch(error => next(error))
 })
 
-app.get('/api/persons/:id', (request, response) => {
-	Person.findById(request.params.id).then(person => {
-		response.json(person)
-	})
+app.get('/api/persons/:id', (request, response, next) => {
+	Person.findById(request.params.id)
+		.then(person => {
+			if (person) {
+				response.json(person)
+			} else {
+				response.status(404).end
+			}
+		})
+		.catch(error => next(error))
 })
 
-app.delete('/api/persons/:id', (request, response) => {
-	Person.findByIdAndRemove(request.params.id).then(person => {
-		response.status(204).end()
-	})
+app.delete('/api/persons/:id', (request, response, next) => {
+	Person.findByIdAndRemove(request.params.id)
+		.then(person => {
+			response.status(204).end()
+		})
+		.catch(error => next(error))
 })
 
-app.post('/api/persons', (request, response) => {
+app.post('/api/persons', (request, response, next) => {
 	const body = request.body
 
 	if (body.name === undefined) {
@@ -64,12 +87,17 @@ app.post('/api/persons', (request, response) => {
 		number: body.number,
 	})
 	
-	person.save().then(savedPerson => {
-		response.json(savedPerson)
-	})
+	person.save()
+		.then(savedPerson => {
+			response.json(savedPerson)
+		})
+		.catch(error => next(error))
 })
 
-PORT = process.env.PORT || 8080
+app.use(unknownEndpoint)
+app.use(errorHandler)
+
+PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
 	console.log(`Server running at Port ${PORT}`)
 })
