@@ -1,5 +1,7 @@
+require('dotenv').config()
 const express = require('express')
 const morgan = require('morgan')
+const Person = require('./models/mongo')
 
 const app = express()
 
@@ -21,35 +23,6 @@ app.use(morgan(function (tokens, req, res) {
 	].join(' ')
 }))
 
-let persons = [
-	{
-		"name": "Arto Hellas",
-		"number": "040-123456",
-		"id": 1
-	},
-	{
-		"name": "Ada Lovelace",
-		"number": "39-44-5323523",
-		"id": 2
-	},
-	{
-		"name": "Dan Abramov",
-		"number": "12-43-234345",
-		"id": 3
-	},
-	{
-		"name": "Mary Poppendieck",
-		"number": "39-23-6423122",
-		"id": 4
-	}
-]
-
-const generateId = () => {
-	const genId = Math.floor(Math.random() * 500)
-
-	return genId
-}
-
 app.get('/info', (request, response) => {
 	const currentTime = new Date()
 
@@ -58,18 +31,15 @@ app.get('/info', (request, response) => {
 })
 
 app.get('/api/persons', (request, response) => {
-	response.json(persons)
+	Person.find({}).then(person => {
+		response.json(person)
+	})
 })
 
 app.get('/api/persons/:id', (request, response) => {
-	const id = Number(request.params.id)
-	const person = persons.find(item => item.id === id)
-	
-	if (person) {
+	Person.findById(request.params.id).then(person => {
 		response.json(person)
-	} else {
-		response.status(404).end()
-	}
+	})
 })
 
 app.delete('/api/persons/:id', (request, response) => {
@@ -82,29 +52,20 @@ app.delete('/api/persons/:id', (request, response) => {
 app.post('/api/persons', (request, response) => {
 	const body = request.body
 
-	if (!body.name) {
+	if (body.name === undefined) {
 		response.status(400).json({
 			Error: 'Missing Name'
 		})
 	}
-	
 
-	const person = {
+	const person = new Person({
 		name: body.name,
 		number: body.number,
-		id: generateId()
-	}
+	})
 	
-	const dupeCheck = persons.filter(item => item.name.toLowerCase() === person.name.toLowerCase())
-
-	if (dupeCheck.length > 0) {
-		response.status(400).json({
-			Error: 'Name must be Unique'
-		})
-	} else {
-		persons = persons.concat(person)
-		response.json(person)
-	}
+	person.save().then(savedPerson => {
+		response.json(savedPerson)
+	})
 })
 
 PORT = process.env.PORT || 8080
