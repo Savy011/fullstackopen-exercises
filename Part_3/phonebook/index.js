@@ -40,9 +40,11 @@ app.use(morgan(function (tokens, req, res) {
 
 app.get('/info', (request, response) => {
 	const currentTime = new Date()
-
-	response.send(`<h3>Phonebook has info for ${persons.length} people</h3>
-		<h4>${currentTime}</h4>`)
+	
+	Person.find({}).then(persons => {
+		response.send(`<h3>Phonebook has info for ${persons.length} people</h3>
+			<h4>${currentTime}</h4>`)
+	})
 })
 
 app.get('/api/persons', (request, response, next) => {
