@@ -78,8 +78,28 @@ test('A blog posted with no likes property has 0 likes by default', async () => 
 	const addedBlog = blogsAtEnd.find(b => b.title === 'Canonical string reduction')
 	expect(addedBlog.likes).toBe(0)
 })
-
-
+test('A blog posted with no title property returns Status Code 400', async () => {
+	const newBlog = {
+		author: "Edsger W. Dijkstra",
+		url: "http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html",
+	}
+	
+	await api
+		.post('/api/blogs')
+		.send(newBlog)
+		.expect(400)
+})
+test('A blog posted with no url property returns Status Code 400', async () => {
+	const newBlog = {
+		title: "Canonical string reduction",
+		author: "Edsger W. Dijkstra",
+	}
+	
+	await api
+		.post('/api/blogs')
+		.send(newBlog)
+		.expect(400)
+})
 afterAll(async () => {
 	await mongoose.connection.close()
 })
