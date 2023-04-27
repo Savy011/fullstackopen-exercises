@@ -28,8 +28,25 @@ const favBlog = (blogs) => {
 	return retObj
 }
 
+const mostBlogs = (blogs) => {
+	if (blogs.length === 0) {
+		return undefined
+	}
+	
+	const blogCount = _.countBy(blogs, 'author')
+	
+	const authorWithMostBlogs = _.maxBy(_.keys(blogCount), (author) => blogCount[author])
+
+	if (authorWithMostBlogs.length > 1) {
+		return authorWithMostBlogs[0]
+	}
+
+	return authorWithMostBlogs
+}
+
 module.exports = {
 	dummy,
 	totalLikes,
-	favBlog
+	favBlog,
+	mostBlogs
 }
