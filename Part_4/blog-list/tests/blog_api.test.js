@@ -59,6 +59,27 @@ test('a valid blog can be added', async () => {
 	expect(titles).toContain('First class tests')
 })
 
+test('A blog posted with no likes property has 0 likes by default', async () => {
+	const newBlog = {
+		title: "Canonical string reduction",
+		author: "Edsger W. Dijkstra",
+		url: "http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html",
+	}
+	
+	await api
+		.post('/api/blogs')
+		.send(newBlog)
+		.expect(201)
+		.expect('Content-Type', /application\/json/)
+	
+	const blogsAtEnd = await blogsInDB()
+	expect(blogsAtEnd).toHaveLength(initialBlogs.length + 1)
+	
+	const addedBlog = blogsAtEnd.find(b => b.title === 'Canonical string reduction')
+	expect(addedBlog.likes).toBe(0)
+})
+
+
 afterAll(async () => {
 	await mongoose.connection.close()
 })
