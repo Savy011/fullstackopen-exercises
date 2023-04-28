@@ -136,6 +136,40 @@ describe('Deletion of a Blog', () => {
 	})
 })
 
+describe('Updating a Blog', () => {
+	test('A valid blog can be updated', async () => {
+		const newBlog = {
+			title: "Type wars",
+			author: "Robert C. Martin",
+			url: "http://blog.cleancoder.com/uncle-bob/2016/05/01/TypeWars.html",
+			likes: 2,
+		}
+		
+		await api
+			.post('/api/blogs')
+			.send(newBlog)
+
+		const blogsBeforeUpdate = await blogsInDB()
+		expect(blogsBeforeUpdate).toHaveLength(initialBlogs.length + 1)
+		
+		const blogToBeUpdated = blogsBeforeUpdate.find(b => b.title === 'Type wars')
+		const UpdatedBlog = {
+			...newBlog,
+			likes: newBlog.likes + 1
+		}
+
+		await api
+			.put(`/api/blogs/${blogToBeUpdated.id}`)
+			.send(UpdatedBlog)
+			.expect(201)
+			.expect('Content-Type', /application\/json/)
+		
+		const blogsInEnd = await blogsInDB()
+		const UpdatedBlogInDb = blogsInEnd.find(b => b.title === 'Type wars')
+		expect(UpdatedBlogInDb.likes).toBe(3)
+	}, 7000)
+})
+
 afterAll(async () => {
 	await mongoose.connection.close()
 })
