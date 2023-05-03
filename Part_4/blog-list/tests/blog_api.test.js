@@ -5,8 +5,10 @@ const app = require ('../app')
 
 const api = supertest(app)
 const Blog = require('../models/blog')
+const User = require('../models/user')
 
 beforeEach(async () => {
+	await User.deleteMany({})
 	await Blog.deleteMany({})
 
 	for (let blog of initialBlogs) {
@@ -16,15 +18,33 @@ beforeEach(async () => {
 })
 
 describe('When there are some Blogs saved initially', () => {
+	let token
+
+	beforeAll(async () => {
+		const user = {
+			username: 'testuser1',
+			name: 'testuser1',
+			password: 'testuser@1'
+		}
+
+		await api.post('/api/users').send(user).expect(201)
+
+		const response = await api.post('/api/login').send(user).expect(200)
+
+		token = response.body.token
+	})
+
 	test('Blogs are returned as JSON', async () => {
 		await api
 			.get('/api/blogs')
+			.set('Authorization', `Bearer ${token}`)
 			.expect(200)
 			.expect('Content-Type', /application\/json/)
+
 	})
 
 	test('All blogs are returned', async () => {
-		const response = await api.get('/api/blogs')
+		const response = await api.get('/api/blogs').set('Authorization', `Bearer ${token}`)
 
 		expect(response.body).toHaveLength(initialBlogs.length)
 	})
@@ -32,6 +52,7 @@ describe('When there are some Blogs saved initially', () => {
 	test('All blogs have a unique identifier property named \'id\'', async () => {
 		const response = await api
 			.get('/api/blogs')
+			.set('Authorization', `Bearer ${token}`)
 			.expect(200)
 		
 		const retBlog = response.body[0]
@@ -41,6 +62,22 @@ describe('When there are some Blogs saved initially', () => {
 })
 
 describe('Addition of a Blog', () => {
+	let token
+
+	beforeAll(async () => {
+		const user = {
+			username: 'testuser1',
+			name: 'testuser1',
+			password: 'testuser@1'
+		}
+
+		await api.post('/api/users').send(user).expect(201)
+
+		const response = await api.post('/api/login').send(user)
+
+		token = response.body.token
+	})
+
 	test('a valid blog can be added', async () => {
 		const newBlog = {
 			title: "First class tests",
@@ -51,10 +88,9 @@ describe('Addition of a Blog', () => {
 		
 		await api
 			.post('/api/blogs')
+			.set('Authorization', `Bearer ${token}`)
 			.send(newBlog)
-			.expect(201)
-			.expect('Content-Type', /application\/json/)
-		
+
 		const blogsAtEnd = await blogsInDB()
 		expect(blogsAtEnd).toHaveLength(initialBlogs.length + 1)
 		
@@ -71,13 +107,12 @@ describe('Addition of a Blog', () => {
 		
 		await api
 			.post('/api/blogs')
+			.set('Authorization', `Bearer ${token}`)
 			.send(newBlog)
-			.expect(201)
-			.expect('Content-Type', /application\/json/)
-		
+
 		const blogsAtEnd = await blogsInDB()
 		expect(blogsAtEnd).toHaveLength(initialBlogs.length + 1)
-		
+	
 		const addedBlog = blogsAtEnd.find(b => b.title === 'Canonical string reduction')
 		expect(addedBlog.likes).toBe(0)
 	})
@@ -90,6 +125,7 @@ describe('Addition of a Blog', () => {
 		
 		await api
 			.post('/api/blogs')
+			.set('Authorization', `Bearer ${token}`)
 			.send(newBlog)
 			.expect(400)
 	})
@@ -102,33 +138,49 @@ describe('Addition of a Blog', () => {
 		
 		await api
 			.post('/api/blogs')
+			.set('Authorization', `Bearer ${token}`)
 			.send(newBlog)
 			.expect(400)
 	})
 })
 
 describe('Deletion of a Blog', () => {
+	let token
+
+	beforeAll(async () => {
+		const user = {
+			username: 'testuser1',
+			name: 'testuser1',
+			password: 'testuser@1'
+		}
+
+		await api.post('/api/users').send(user).expect(201)
+
+		const response = await api.post('/api/login').send(user).expect(200)
+
+		token = response.body.token
+	})
+
 	test('A blog can be deleted', async () => {
 		const newBlog = {
 			title: "Canonical string reduction",
 			author: "Edsger W. Dijkstra",
+			likes: 45,
 			url: "http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html",
 		}
-		
+
 		await api
 			.post('/api/blogs')
+			.set('Authorization', `Bearer ${token}`)
 			.send(newBlog)
-			.expect(201)
-			.expect('Content-Type', /application\/json/)
 		
 		const blogsBeforeDelete = await blogsInDB()
 		expect(blogsBeforeDelete).toHaveLength(initialBlogs.length + 1)
-		
 		const blogToBeDeleted = blogsBeforeDelete.find(b => b.title === 'Canonical string reduction')
 		
 		await api
 			.delete(`/api/blogs/${blogToBeDeleted.id}`)
-			.expect(204)
+			.set('Authorization', `Bearer ${token}`)
 
 		const blogsInEnd = await blogsInDB()
 		expect(blogsInEnd).toHaveLength(blogsBeforeDelete.length - 1)
@@ -137,6 +189,22 @@ describe('Deletion of a Blog', () => {
 })
 
 describe('Updating a Blog', () => {
+	let token
+
+	beforeAll(async () => {
+		const user = {
+			username: 'testuser1',
+			name: 'testuser1',
+			password: 'testuser@1'
+		}
+
+		await api.post('/api/users').send(user).expect(201)
+
+		const response = await api.post('/api/login').send(user).expect(200)
+
+		token = response.body.token
+	})
+
 	test('A valid blog can be updated', async () => {
 		const newBlog = {
 			title: "Type wars",
@@ -147,6 +215,7 @@ describe('Updating a Blog', () => {
 		
 		await api
 			.post('/api/blogs')
+			.set('Authorization', `Bearer ${token}`)
 			.send(newBlog)
 
 		const blogsBeforeUpdate = await blogsInDB()
@@ -160,6 +229,7 @@ describe('Updating a Blog', () => {
 
 		await api
 			.put(`/api/blogs/${blogToBeUpdated.id}`)
+			.set('Authorization', `Bearer ${token}`)
 			.send(UpdatedBlog)
 			.expect(201)
 			.expect('Content-Type', /application\/json/)

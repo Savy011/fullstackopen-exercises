@@ -22,6 +22,12 @@ const tokenExtracter = (request, response, next) => {
 }
 
 const userExtracter = (request, response, next) => {
+	if (!request.token) {
+		return response.status(401).json({
+			error: 'Token not found!'
+		})
+	}
+
 	const decodedToken = jwt.verify(request.token, JWT_SECRET)
 
 	if (!decodedToken.id) {
@@ -31,7 +37,6 @@ const userExtracter = (request, response, next) => {
 	}
 	
 	request.user = decodedToken.id
-
 	next()
 }
 

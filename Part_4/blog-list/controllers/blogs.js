@@ -15,7 +15,7 @@ blogsRouter.post('/', async (request, response) => {
 
 	const blog = new Blog({
 		...request.body,
-		user: user._id
+		user: request.user
 	})
 
 	if (!blog.likes) {
