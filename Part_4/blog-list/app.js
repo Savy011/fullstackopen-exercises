@@ -13,7 +13,6 @@ const {
 	unknownEndpoint,
 	errorHandler,
 	tokenExtracter,
-    userExtracter
 } = require('./utils/middleware')
 
 mongoose.set('strictQuery', false)
@@ -34,7 +33,7 @@ app.use(tokenExtracter)
 
 app.use('/api/login', loginRouter)
 app.use('/api/users', usersRouter)
-app.use('/api/blogs', userExtracter, blogsRouter)
+app.use('/api/blogs', blogsRouter)
 
 app.use(unknownEndpoint)
 app.use(errorHandler)

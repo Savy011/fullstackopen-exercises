@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken')
 const blogsRouter = require('express').Router()
 const Blog = require('../models/blog')
 const User = require('../models/user')
+const { userExtracter } = require('../utils/middleware')
 
 blogsRouter.get('/', async (request, response) => {
 	const blogs = await Blog.find({}).populate('user', { username: 1, name: 1 })
@@ -10,7 +11,7 @@ blogsRouter.get('/', async (request, response) => {
 	response.status(200).json(blogs)
 })
 
-blogsRouter.post('/', async (request, response) => {
+blogsRouter.post('/', userExtracter, async (request, response) => {
 	const user = await User.findById(request.user)
 
 	const blog = new Blog({
@@ -33,7 +34,7 @@ blogsRouter.post('/', async (request, response) => {
 	response.status(201).json(savedBlog)
 })
 
-blogsRouter.delete('/:id', async (request, response) => {
+blogsRouter.delete('/:id', userExtracter, async (request, response) => {
 	const blogToDel = await Blog.findById(request.params.id)
 
 	if (!(blogToDel.user.toString() === request.user.toString())) {
@@ -49,7 +50,7 @@ blogsRouter.delete('/:id', async (request, response) => {
 	})
 })
 
-blogsRouter.put('/:id', async (request, response) => {
+blogsRouter.put('/:id', userExtracter ,async (request, response) => {
 	const { likes } = request.body
 
 	const updatedBlog = await Blog.findByIdAndUpdate(request.params.id, { likes }, { new: true, context: 'query' })
