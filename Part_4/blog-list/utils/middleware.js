@@ -1,4 +1,5 @@
-const { request } = require('express')
+const { JWT_SECRET } = require('./config')
+const jwt = require('jsonwebtoken')
 const logger = require('./logger')
 
 const requestLogger = (request, response, next) => {
@@ -18,6 +19,20 @@ const tokenExtracter = (request, response, next) => {
 
 	next()
 
+}
+
+const userExtracter = (request, response, next) => {
+	const decodedToken = jwt.verify(request.token, JWT_SECRET)
+
+	if (!decodedToken.id) {
+		return response.status(401).json({
+			error: 'Invalid Token'
+		})
+	}
+	
+	request.user = decodedToken.id
+
+	next()
 }
 
 const errorHandler = (error, request, response, next) => {
@@ -49,5 +64,6 @@ module.exports = {
 	errorHandler,
 	unknownEndpoint,
 	requestLogger,
-	tokenExtracter
+	tokenExtracter,
+	userExtracter
 }
