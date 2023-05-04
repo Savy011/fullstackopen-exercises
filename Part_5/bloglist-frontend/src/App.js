@@ -11,6 +11,8 @@ const App = () => {
 	const [ title, setTitle ] = useState('')
 	const [ author, setAuthor ] = useState('')
 	const [ url, setUrl ] = useState('')
+	const [ message, setMessage ] = useState('')
+	const [ messageType, setMessageType ] = useState(null)
 
 	useEffect(() => {
 		blogService.getAll().then(blogs => {
@@ -39,6 +41,13 @@ const App = () => {
 			setUsername('')
 			setPassword('')
 		} catch (exception) {
+			setMessageType('error')
+			setMessage('Wrong Credentials')
+			setTimeout(() => {
+				setMessageType(null)
+				setMessage('')
+			}, 5000);
+			
 			console.error(exception)
 		}
 	}
@@ -59,14 +68,31 @@ const App = () => {
 			setAuthor('')
 			setUrl('')
 			await blogService.getAll().then(newBlogs => setBlogs(newBlogs))
+			setMessageType('success')
+			setMessage(`Blog '${title}' by ${author} added!`)
+			setTimeout(() => {
+				setMessageType(null)
+				setMessage('')
+			}, 5000);
 		} catch (exception) {
 			console.error(exception)
 		}
 	}
 	
+	const NotifBox = () => {
+		return (
+			<>
+				<div className={messageType}>
+					<p>{message}</p>
+				</div>
+			</>
+		)
+	}
+
 	const loginForm = () => (
 		<div>
 			<h2>Log-in to the Application</h2>
+			{ messageType === null ? null : <NotifBox /> }
 			<form onSubmit={handleLogin}>
 				<p>
 					Username:
@@ -86,6 +112,7 @@ const App = () => {
 	const blogList = () => (
     	<div>	
 			<h2>Blogs</h2>
+			{ messageType === null ? null : <NotifBox /> }
 			<p>
 				Logged In as {user.name}
 				&nbsp;
