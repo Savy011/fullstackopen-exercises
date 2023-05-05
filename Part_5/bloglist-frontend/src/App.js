@@ -12,7 +12,7 @@ const App = () => {
 	const [ user, setUser ] = useState(null)
 	const [ message, setMessage ] = useState('')
 	const [ messageType, setMessageType ] = useState(null)
-	
+
 	const blogFormRef = useRef()
 
 	useEffect(() => {
@@ -23,7 +23,7 @@ const App = () => {
 
 	useEffect(() => {
 		const loggedUserJSON = window.localStorage.getItem('loggedBlogAppUser')
-		
+
 		if (loggedUserJSON) {
 			const user = JSON.parse(loggedUserJSON)
 			setUser(user)
@@ -32,8 +32,8 @@ const App = () => {
 	}, [])
 
 	const handleLogin = async event => {
-		event.preventDefault()	
-		
+		event.preventDefault()
+
 		try {
 			const user = await loginService.login({ username, password })
 			window.localStorage.setItem('loggedBlogAppUser', JSON.stringify(user))
@@ -47,8 +47,8 @@ const App = () => {
 			setTimeout(() => {
 				setMessageType(null)
 				setMessage('')
-			}, 5000);
-			
+			}, 5000)
+
 			console.error(exception)
 		}
 	}
@@ -69,18 +69,18 @@ const App = () => {
 			setTimeout(() => {
 				setMessageType(null)
 				setMessage('')
-			}, 5000);
+			}, 5000)
 		} catch (exception) {
 			setMessage(`Error occured while creating '${blogObj.title}'`)
 			setMessageType('error')
 			setTimeout(() => {
 				setMessage('')
 				setMessageType(null)
-			}, 5000);
+			}, 5000)
 			console.error(exception)
 		}
 	}
-	
+
 	const updateBlog = async blogObj => {
 		try {
 			await blogService.update(blogObj)
@@ -90,14 +90,14 @@ const App = () => {
 			setTimeout(() => {
 				setMessage('')
 				setMessageType(null)
-			}, 5000);
+			}, 5000)
 		} catch (exception) {
 			setMessage(`Error occured while updating '${blogObj.title}'`)
 			setMessageType('error')
 			setTimeout(() => {
 				setMessage('')
 				setMessageType(null)
-			}, 5000);
+			}, 5000)
 			console.error(exception)
 		}
 	}
@@ -114,14 +114,14 @@ const App = () => {
 			setTimeout(() => {
 				setMessage('')
 				setMessageType(null)
-			}, 5000);
+			}, 5000)
 		} catch (exception) {
 			setMessage(`Error occured while deleting '${blogObj.title}'`)
 			setMessageType('error')
 			setTimeout(() => {
 				setMessage('')
 				setMessageType(null)
-			}, 5000);
+			}, 5000)
 			console.error(exception)
 		}
 	}
@@ -155,10 +155,10 @@ const App = () => {
 			</form>
 		</div>
 	)
-	
+
 
 	const blogList = () => (
-    	<div>	
+		<div>
 			<h2>Blogs</h2>
 			{ messageType === null ? null : <NotifBox /> }
 			<p>
@@ -166,7 +166,7 @@ const App = () => {
 				&nbsp;
 				<button onClick={handleLogout} >Logout</button>
 			</p>
-	
+
 			<h4>Create New Blog</h4>
 			<Toggleable buttonLabel='Create Blog' ref={blogFormRef} >
 				<BlogForm createBlog={createBlog} />
@@ -174,8 +174,8 @@ const App = () => {
 
 			<h3>Blog List</h3>
 			<div>
-    			{blogs.sort((a, b) => b.likes - a.likes).map(blog => 
-					<Blog 
+				{blogs.sort((a, b) => b.likes - a.likes).map(blog =>
+					<Blog
 						key={blog.id}
 						blog={blog}
 						user={user}
@@ -189,9 +189,9 @@ const App = () => {
 	)
 
 	return (
-    	<div>
+		<div>
 			{ user === null ? loginForm() : blogList() }
-    	</div>
+		</div>
 	)
 }
 

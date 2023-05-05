@@ -1,15 +1,23 @@
-import { useState } from "react"
+import { useState } from 'react'
+import propTypes from 'prop-types'
 
 const Blog = ({ blog, user, updateBlog, deleteBlog }) => {
 	const [ blogObj, setBlogObj ] = useState(blog)
 	const [ visible, setVisible ] = useState(false)
-	
+
+	Blog.propTypes = {
+		blog: propTypes.object.isRequired,
+		user: propTypes.object.isRequired,
+		updateBlog: propTypes.func.isRequired,
+		deleteBlog: propTypes.func.isRequired
+	}
+
 	const showWhenVisible = { display: visible ? '' : 'none' }
 	const buttonLabel = visible ? 'Hide' : 'Show'
-	
+
 	const likeBlog = event => {
 		event.preventDefault()
-	
+
 		const updatedBlog = {
 			...blogObj,
 			likes: blogObj.likes + 1
@@ -26,7 +34,7 @@ const Blog = ({ blog, user, updateBlog, deleteBlog }) => {
 
 	return (
 		<div className="blog" >
-    		<div>
+			<div>
 				<i>{blogObj.title}</i> - {blogObj.author}
 				&nbsp;
 				<button onClick={() => setVisible(!visible)} >{buttonLabel}</button>
