@@ -71,6 +71,12 @@ const App = () => {
 				setMessage('')
 			}, 5000);
 		} catch (exception) {
+			setMessage(`Error occured while creating '${blogObj.title}'`)
+			setMessageType('error')
+			setTimeout(() => {
+				setMessage('')
+				setMessageType(null)
+			}, 5000);
 			console.error(exception)
 		}
 	}
@@ -79,7 +85,43 @@ const App = () => {
 		try {
 			await blogService.update(blogObj)
 			await blogService.getAll().then(updatedBlogs => setBlogs(updatedBlogs))
+			setMessage(`Liked '${blogObj.title}' by ${blogObj.author}`)
+			setMessageType('success')
+			setTimeout(() => {
+				setMessage('')
+				setMessageType(null)
+			}, 5000);
 		} catch (exception) {
+			setMessage(`Error occured while updating '${blogObj.title}'`)
+			setMessageType('error')
+			setTimeout(() => {
+				setMessage('')
+				setMessageType(null)
+			}, 5000);
+			console.error(exception)
+		}
+	}
+
+	const deleteBlog = async blogObj => {
+		try {
+			const confirmation = window.confirm(`Delete ${blogObj.title}`)
+			if (confirmation) {
+				await blogService.remove(blogObj)
+				await blogService.getAll().then(updatedBlogs => setBlogs(updatedBlogs))
+			}
+			setMessage(`Deleted '${blogObj.title}' by ${blogObj.author}`)
+			setMessageType('success')
+			setTimeout(() => {
+				setMessage('')
+				setMessageType(null)
+			}, 5000);
+		} catch (exception) {
+			setMessage(`Error occured while deleting '${blogObj.title}'`)
+			setMessageType('error')
+			setTimeout(() => {
+				setMessage('')
+				setMessageType(null)
+			}, 5000);
 			console.error(exception)
 		}
 	}
@@ -125,14 +167,22 @@ const App = () => {
 				<button onClick={handleLogout} >Logout</button>
 			</p>
 	
-			<h3>Create New Blog</h3>
+			<h4>Create New Blog</h4>
 			<Toggleable buttonLabel='Create Blog' ref={blogFormRef} >
 				<BlogForm createBlog={createBlog} />
 			</Toggleable>
 
 			<h3>Blog List</h3>
 			<div>
-    			{blogs.sort((a, b) => b.likes - a.likes).map(blog => <Blog key={blog.id} blog={blog} updateBlog={updateBlog} />)}
+    			{blogs.sort((a, b) => b.likes - a.likes).map(blog => 
+					<Blog 
+						key={blog.id}
+						blog={blog}
+						user={user}
+						updateBlog={updateBlog}
+						deleteBlog={deleteBlog}
+					/>
+				)}
 			</div>
 
 		</div>
