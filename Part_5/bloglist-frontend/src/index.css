@@ -1,3 +1,13 @@
+.blog {
+	background: lightgray;
+	border: black 3px solid;
+	border-radius: 5px;
+	padding-top: 10px;
+	padding-bottom: 10px;
+	padding-left: 10px;
+	margin-bottom: 5px;
+}
+
 .success {
 	font-size: 1.5rem;
 	padding-left: 15px;
