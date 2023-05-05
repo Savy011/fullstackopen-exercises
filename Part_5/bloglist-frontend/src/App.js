@@ -75,6 +75,15 @@ const App = () => {
 		}
 	}
 	
+	const updateBlog = async blogObj => {
+		try {
+			await blogService.update(blogObj)
+			await blogService.getAll().then(updatedBlogs => setBlogs(updatedBlogs))
+		} catch (exception) {
+			console.error(exception)
+		}
+	}
+
 	const NotifBox = () => {
 		return (
 			<>
@@ -123,7 +132,7 @@ const App = () => {
 
 			<h3>Blog List</h3>
 			<div>
-    			{blogs.map(blog => <Blog key={blog.id} blog={blog} />)}
+    			{blogs.map(blog => <Blog key={blog.id} blog={blog} updateBlog={updateBlog} />)}
 			</div>
 
 		</div>
