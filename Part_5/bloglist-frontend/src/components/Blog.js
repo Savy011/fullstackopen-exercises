@@ -33,13 +33,13 @@ const Blog = ({ blog, user, updateBlog, deleteBlog }) => {
 	}
 
 	return (
-		<div className="blog" >
-			<div>
+		<div className='blog' >
+			<div className='blog-title'>
 				<i>{blogObj.title}</i> - {blogObj.author}
 				&nbsp;
 				<button onClick={() => setVisible(!visible)} >{buttonLabel}</button>
 			</div>
-			<div style={showWhenVisible} >
+			<div style={showWhenVisible} className='blog-details' >
 				<p><b>Url:</b> {blogObj.url}</p>
 				<p><b>Likes:</b> {blogObj.likes} <button onClick={likeBlog} > 👍 </button> </p>
 				<p><b>User:</b> {blogObj.user.name}</p>
