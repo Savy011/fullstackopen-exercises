@@ -28,9 +28,26 @@ describe('<Blog />', () => {
 				deleteBlog={mockDeleteHandler}
 			/>).container
 
-		const blogElement = container.querySelector('.blog-title')
 		const blogDetails = container.querySelector('.blog-details')
-		
+
 		expect(blogDetails).toHaveStyle('display: none')
+	})
+
+	test('all blog details are render when \'Show\' button is clicked', () => {
+		container = render(<Blog
+				blog={blog}
+				user={user}
+				updateBlog={mockUpdateHandler}
+				deleteBlog={mockDeleteHandler}
+			/>).container
+
+		const testUser = userEvent.setup()
+		const showButton = screen.getByText('Show')
+		testUser.click(showButton)
+
+		const blogDetails = container.querySelector('.blog-details')
+
+		expect(blogDetails).toHaveTextContent('Url: https://link.to.test/blog')
+		expect(blogDetails).toHaveTextContent('Likes: 1212')
 	})
 })
