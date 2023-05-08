@@ -46,7 +46,7 @@ describe('Blog App', () => {
             cy.login({ username: testUser.username, password: testUser.password }) 
         })
 
-        it('logged use can create a blog', async function() {
+        it('logged user can create a blog', async function() {
             cy.contains('Create Blog').click({ force: true })
             cy.get('#title-input').type('Blog Title', { force: true })
             cy.get('#author-input').type('Author', { force: true })
@@ -54,6 +54,25 @@ describe('Blog App', () => {
             cy.get('#submit-button').click()
             
             cy.contains('Blog Title - Author')
+        })
+
+        it('logged user can like a blog', async function() {
+            cy.contains('Create Blog').click({ force: true })
+            cy.get('#title-input').type('Blog Title', { force: true })
+            cy.get('#author-input').type('Author', { force: true })
+            cy.get('#url-input').type('https://link.to/blog', { force: true })
+            cy.get('#submit-button').click({ force:true })
+            
+            cy.wait(1000)
+            cy.get('#show-button').click({ force: true })
+
+            cy.contains('Likes: 0')
+
+            cy.wait(1000)
+            cy.get('#like-button').click({ force: true })
+            cy.wait(1000)
+            cy.contains('Likes: 1')
+            cy.contains('Liked \'Blog Title\' bu Author')
         })
     })
 })
