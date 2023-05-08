@@ -6,7 +6,7 @@ testingRouter.post('/reset', async (request, response) => {
     await Blog.deleteMany({})
     await User.deleteMany({})
 
-    response.status(204).end()
+    response.status(204).json({ message: 'Reset Database successful' })
 })
 
 module.exports = testingRouter

@@ -144,14 +144,14 @@ const App = () => {
 				<p>
 					Username:
 					&nbsp;
-					<input type="text" name="Username" value={username} onChange={({ target }) => setUsername(target.value)} />
+					<input type="text" name="Username" id='username' value={username} onChange={({ target }) => setUsername(target.value)} />
 				</p>
 				<p>
 					Password:
 					&nbsp;
-					<input type="password" name="Password" value={password} onChange={({ target }) => setPassword(target.value)} />
+					<input type="password" name="Password" id='password' value={password} onChange={({ target }) => setPassword(target.value)} />
 				</p>
-				<button type="submit" >Log-in</button>
+				<button id='login-button' type="submit" >Log-in</button>
 			</form>
 		</div>
 	)
