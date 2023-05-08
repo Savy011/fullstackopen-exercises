@@ -4,10 +4,16 @@ describe('Blog App', () => {
         name: 'Test User',
         password: 'testuser@1'
     }
+    const testUser2 = {
+        username: 'testuser2',
+        name: 'Test User 2',
+        password: 'testuser@2'
+    }
 
     beforeEach(function() {
         cy.request('POST', 'http://localhost:3001/api/testing/reset')
         cy.request('POST', 'http://localhost:3001/api/users', testUser)
+        cy.request('POST', 'http://localhost:3001/api/users', testUser2)
         cy.visit('http://localhost:3000')
     })
 
@@ -20,11 +26,15 @@ describe('Blog App', () => {
 
     describe('Log-in Tests', () => {
         it('Login with wrong credentials fails', function() {
+            cy.visit('http://localhost:3000')
             cy.contains('Log-in to the Application')
+
+            cy.wait(1000)
             cy.get('#username').type('testuser1', { force: true })
             cy.get('#password').type('wrong', { force: true })
             cy.get('#login-button').click({ force: true })
             
+            cy.wait(1000)
             cy.get('.error').should('contain', 'Wrong Credentials')
                     .should('has.css', 'color', 'rgb(255, 0, 0)')
                     .should('has.css', 'border-style', 'solid')
@@ -87,6 +97,20 @@ describe('Blog App', () => {
             cy.get('#delete-button').click({ force: true })
             cy.wait(1000)
             cy.contains('Deleted \'Blog Title\' by Author')
+        })
+        
+        it('one user cannot delete other user\'s blogs', function() {
+            cy.createNote({ title: 'Blog by First User', author: 'Author', url: 'https://link.to/blog' })
+
+            cy.wait(1000)
+            cy.get('#logout-button').click({ force: true }) 
+            
+            cy.wait(1000)
+            cy.login({ username: testUser2.username, password: testUser2.password }) 
+            
+            cy.wait(1000)
+            cy.get('#show-button').click({ force: true })
+            cy.get('#delete-button').should('not.exist')
         })
     })
 })
