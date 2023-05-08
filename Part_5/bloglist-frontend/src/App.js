@@ -140,7 +140,7 @@ const App = () => {
 		<div>
 			<h2>Log-in to the Application</h2>
 			{ messageType === null ? null : <NotifBox /> }
-			<form onSubmit={handleLogin}>
+			<form onSubmit={handleLogin} id='login-form'>
 				<p>
 					Username:
 					&nbsp;
@@ -155,7 +155,6 @@ const App = () => {
 			</form>
 		</div>
 	)
-
 
 	const blogList = () => (
 		<div>
