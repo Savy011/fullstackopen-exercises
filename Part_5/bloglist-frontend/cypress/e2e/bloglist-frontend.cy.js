@@ -112,5 +112,31 @@ describe('Blog App', () => {
             cy.get('#show-button').click({ force: true })
             cy.get('#delete-button').should('not.exist')
         })
+
+        it('blogs are sorted by number of likes', function() {
+            cy.get('html')
+            cy.createNote({ title: 'First Test Blog', author: 'Author1', url: 'https://link.to/blog1' })
+            cy.createNote({ title: 'Second Test Blog', author: 'Author2', url: 'https://link.to/blog2' })
+            cy.createNote({ title: 'Third Test Blog', author: 'Author3', url: 'https://link.to/blog3' })
+            
+            cy.get(':nth-child(1) > .blog-title > #show-button').click({ force: true })
+            cy.get(':nth-child(1) > .blog-details > :nth-child(2) > #like-button')
+                .click({ force:true })
+            
+            cy.get(':nth-child(2) > .blog-title > #show-button').click({ force: true })
+            cy.get(':nth-child(2) > .blog-details > :nth-child(2) > #like-button')
+                .click({ force:true })
+                .click({ force:true })
+            
+            cy.get(':nth-child(3) > .blog-title > #show-button').click({ force: true })
+            cy.get(':nth-child(3) > .blog-details > :nth-child(2) > #like-button')
+                .click({ force:true })
+                .click({ force:true })
+                .click({ force:true })
+            
+            cy.get(':nth-child(1) > .blog-details > :nth-child(2) > #likes').should('contain', 'Likes: 3')
+            cy.get(':nth-child(2) > .blog-details > :nth-child(2) > #likes').should('contain', 'Likes: 2')
+            cy.get(':nth-child(3) > .blog-details > :nth-child(2) > #likes').should('contain', 'Likes: 1')
+        })
     })
 })

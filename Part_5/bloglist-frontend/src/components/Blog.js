@@ -41,7 +41,7 @@ const Blog = ({ blog, user, updateBlog, deleteBlog }) => {
 			</div>
 			<div style={showWhenVisible} className='blog-details' >
 				<p><b>Url:</b> {blogObj.url}</p>
-				<p><b>Likes:</b> {blogObj.likes} <button onClick={likeBlog} id='like-button' >Like</button> </p>
+				<p><span id='likes'><b>Likes:</b> {blogObj.likes}</span><button onClick={likeBlog} id='like-button' >Like</button> </p>
 				<p><b>User:</b> {blogObj.user.name}</p>
 				{ user.username.toString() === blogObj.user.username.toString() ? <p><button id='delete-button' onClick={removeBlog} >Delete</button></p> : null}
 			</div>
