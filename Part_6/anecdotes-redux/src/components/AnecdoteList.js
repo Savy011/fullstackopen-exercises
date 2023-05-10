@@ -16,6 +16,9 @@ const AnecdoteList = () => {
     const vote = id => {
         dispatch(voteAnecdote(id))
         dispatch(notifChange('Voted Anecdote'))
+        setTimeout(() => {
+            dispatch(notifChange(''))
+        }, 5000)
     }
     
     return (
