@@ -1,10 +1,8 @@
 import { createSlice } from "@reduxjs/toolkit"
 
-const initialState = ''
-
 const notifSlice = createSlice({
     name: 'notif',
-    initialState,
+    initialState: '',
     reducers: {
         notifChange(state, action) {
             return action.payload
