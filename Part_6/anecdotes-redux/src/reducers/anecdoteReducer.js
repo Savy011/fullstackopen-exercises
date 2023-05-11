@@ -1,8 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit'
 import anecdoteService from '../services/anecdote'
-import axios from 'axios'
-
-const getId = () => (100000 * Math.random()).toFixed(0)
 
 const anecdoteSlice = createSlice({
     name: 'anecdotes',
