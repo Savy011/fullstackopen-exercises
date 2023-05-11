@@ -1,5 +1,7 @@
 import AnecdoteForm from './components/AnecdoteForm'
 import Notification from './components/Notification'
+import { useContext } from 'react'
+import { NotifContext } from './NotifReducer'
 import { useQuery, useMutation, useQueryClient } from 'react-query'
 import { getAnecdotes, updateAnecdote } from './requests'
 
@@ -13,8 +15,9 @@ const App = () => {
 
         }
     })
-    console.log(result)
 
+    const [notif, notifDispatch] = useContext(NotifContext)
+    
     if ( result.status === 'loading' ) {
         return <div>Loading data</div>
     }
@@ -25,6 +28,10 @@ const App = () => {
 
     const handleVote = (anecdote) => {
         updateVoteMutation.mutate(anecdote)
+        notifDispatch({ type: 'SET', payload: `Voted Anecdote '${anecdote.content}'`})
+        setTimeout(() => {
+            notifDispatch({ type: 'CLEAR'})
+        }, 5000);
     }
 
     const anecdotes = result.data
@@ -32,7 +39,6 @@ const App = () => {
     return (
         <div>
             <h3>Anecdote App</h3>
-            
             <Notification />
             <AnecdoteForm />
             
