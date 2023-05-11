@@ -14,3 +14,10 @@ export const postAnecdote = async content => {
 
     return response.data
 }
+
+export const updateAnecdote = async obj => {
+    const updatedObj = { ...obj, votes: obj.votes + 1 }
+    const response = await axios.put(`${baseUrl}/${obj.id}`, updatedObj)
+
+    return response.data
+}
