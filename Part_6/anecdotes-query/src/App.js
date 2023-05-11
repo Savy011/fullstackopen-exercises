@@ -21,14 +21,6 @@ const App = () => {
 
     const anecdotes = result.data
 
-    /*const anecdotes = [
-        {
-        "content": "If it hurts, do it more often",
-        "id": "47145",
-        "votes": 0
-        },
-    ]*/
-
     return (
         <div>
             <h3>Anecdote App</h3>
