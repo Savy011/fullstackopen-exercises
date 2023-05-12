@@ -5,9 +5,11 @@ import Menu from './components/Menu'
 import About from './components/About'
 import Footer from './components/Footer'
 import CreateNew from './components/CreateNew'
-import { Navigate, Route, Routes, useMatch } from 'react-router-dom'
+import { useNavigate, Navigate, Route, Routes, useMatch } from 'react-router-dom'
+import Notification from './components/Notification'
 
 const App = () => {
+    const [notification, setNotification] = useState('')
     const [anecdotes, setAnecdotes] = useState([
         {
         content: 'If it hurts, do it more often',
@@ -25,14 +27,18 @@ const App = () => {
         }
     ])
 
+    const navigate = useNavigate()
     const match = useMatch('/anecdotes/:id')
     const anecdote = match ? anecdotes.find(a => a.id === Number(match.params.id)) : null
-
-    const [notification, setNotification] = useState('')
 
     const addNew = (anecdote) => {
         anecdote.id = Math.round(Math.random() * 10000)
         setAnecdotes(anecdotes.concat(anecdote))
+        setNotification(`Added ${anecdote.content}`)
+        setTimeout(() => {
+            setNotification('')
+        }, 5000)
+        navigate('/')
     }
 
     const anecdoteById = (id) =>
@@ -54,6 +60,7 @@ const App = () => {
             <div>
                 <h1>Software Anecdotes</h1>
                 <Menu />
+                <Notification notification={notification} />
             </div>
 
             <Routes>
