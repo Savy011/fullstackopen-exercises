@@ -5,13 +5,21 @@ import { NotifContext } from '../NotifReducer'
 
 const AnecdoteForm = () => {
     const queryClient = useQueryClient()
+    const [notif, notifDispatch] = useContext(NotifContext)
+    
     const newAnecdoteMutation = useMutation(postAnecdote, {
         onSuccess: () => {
             const anecdotes = queryClient.getQueryData('anecdotes')
             queryClient.invalidateQueries('anecdotes', anecdotes.concat())
+        },
+        onError: (error) => {
+        notifDispatch({ type: 'SET', payload: error.response.data.error })
+        setTimeout(() => {
+            notifDispatch({ type: 'CLEAR' })
+        }, 5000)
         }
+        
     })
-    const [notif, notifDispatch] = useContext(NotifContext)
 
     const onCreate = (event) => {
         event.preventDefault()
