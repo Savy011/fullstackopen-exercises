@@ -1,17 +1,17 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useContext } from 'react'
 import Blog from './components/Blog'
 import BlogForm from './components/BlogForm'
 import Toggleable from './components/Toggleable'
 import blogService from './services/blogs'
 import loginService from './services/login'
+import NotifContext from './utils/NotifContext'
 
 const App = () => {
     const [blogs, setBlogs] = useState([])
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
     const [user, setUser] = useState(null)
-    const [message, setMessage] = useState('')
-    const [messageType, setMessageType] = useState(null)
+    const [notif, dispatch] = useContext(NotifContext)
 
     const blogFormRef = useRef()
 
@@ -45,11 +45,9 @@ const App = () => {
             setUsername('')
             setPassword('')
         } catch (exception) {
-            setMessageType('error')
-            setMessage('Wrong Credentials')
+            dispatch({ type: 'SET', payload: 'Wrong Credentials' })
             setTimeout(() => {
-                setMessageType(null)
-                setMessage('')
+                dispatch({ type: 'CLEAR' })
             }, 5000)
 
             console.error(exception)
@@ -67,18 +65,20 @@ const App = () => {
             blogFormRef.current.toggleVisibility()
             await blogService.create(blogObj)
             await blogService.getAll().then((newBlogs) => setBlogs(newBlogs))
-            setMessageType('success')
-            setMessage(`Blog '${blogObj.title}' by ${blogObj.author} added!`)
+            dispatch({
+                type: 'SET',
+                payload: `Blog '${blogObj.title}' by ${blogObj.author} added!`,
+            })
             setTimeout(() => {
-                setMessageType(null)
-                setMessage('')
+                dispatch({ type: 'CLEAR' })
             }, 5000)
         } catch (exception) {
-            setMessage(`Error occured while creating '${blogObj.title}'`)
-            setMessageType('error')
+            dispatch({
+                type: 'SET',
+                payload: `Error occured while creating '${blogObj.title}'`,
+            })
             setTimeout(() => {
-                setMessage('')
-                setMessageType(null)
+                dispatch({ type: 'CLEAR' })
             }, 5000)
             console.error(exception)
         }
@@ -90,18 +90,20 @@ const App = () => {
             await blogService
                 .getAll()
                 .then((updatedBlogs) => setBlogs(updatedBlogs))
-            setMessage(`Liked '${blogObj.title}' by ${blogObj.author}`)
-            setMessageType('success')
+            dispatch({
+                type: 'SET',
+                payload: `Liked '${blogObj.title}' by ${blogObj.author}`,
+            })
             setTimeout(() => {
-                setMessage('')
-                setMessageType(null)
+                dispatch({ type: 'CLEAR' })
             }, 5000)
         } catch (exception) {
-            setMessage(`Error occured while updating '${blogObj.title}'`)
-            setMessageType('error')
+            dispatch({
+                type: 'SET',
+                payload: `Error occured while updating '${blogObj.title}'`,
+            })
             setTimeout(() => {
-                setMessage('')
-                setMessageType(null)
+                dispatch({ type: 'CLEAR' })
             }, 5000)
             console.error(exception)
         }
@@ -116,28 +118,40 @@ const App = () => {
                     .getAll()
                     .then((updatedBlogs) => setBlogs(updatedBlogs))
             }
-            setMessage(`Deleted '${blogObj.title}' by ${blogObj.author}`)
-            setMessageType('success')
+            dispatch({
+                type: 'SET',
+                payload: `Deleted '${blogObj.title}' by ${blogObj.author}`,
+            })
             setTimeout(() => {
-                setMessage('')
-                setMessageType(null)
+                dispatch({ type: 'CLEAR' })
             }, 5000)
         } catch (exception) {
-            setMessage(`Error occured while deleting '${blogObj.title}'`)
-            setMessageType('error')
+            dispatch({
+                type: 'SET',
+                payload: `Error occured while deleting '${blogObj.title}'`,
+            })
             setTimeout(() => {
-                setMessage('')
-                setMessageType(null)
+                dispatch({ type: 'CLEAR' })
             }, 5000)
             console.error(exception)
         }
     }
 
     const NotifBox = () => {
+        const style = {
+            padding: 5,
+            paddingLeft: 10,
+            paddingRight: 10,
+            border: 'solid',
+            borderRadius: 10,
+            fontFamily: 'monospace',
+            fontSize: 18,
+        }
+
         return (
             <>
-                <div className={messageType}>
-                    <p>{message}</p>
+                <div style={style}>
+                    <p>{notif}</p>
                 </div>
             </>
         )
@@ -146,7 +160,7 @@ const App = () => {
     const loginForm = () => (
         <div>
             <h2>Log-in to the Application</h2>
-            {messageType === null ? null : <NotifBox />}
+            {notif === '' ? null : <NotifBox />}
             <form
                 onSubmit={handleLogin}
                 id="login-form"
@@ -184,7 +198,7 @@ const App = () => {
     const blogList = () => (
         <div>
             <h2>Blogs</h2>
-            {messageType === null ? null : <NotifBox />}
+            {notif === '' ? null : <NotifBox />}
             <p>
                 Logged In as {user.name}
                 &nbsp;
