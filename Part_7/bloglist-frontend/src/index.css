@@ -1,0 +1,29 @@
+.blog {
+    background: #fffa;
+    border: black 2px solid;
+    border-radius: 5px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    padding-left: 10px;
+    margin-bottom: 5px;
+}
+
+.success {
+    font-size: 1.5rem;
+    padding-left: 15px;
+    padding-right: 15px;
+    color: green;
+    background-color: lightgray;
+    border: green solid 2px;
+    border-radius: 10px;
+}
+
+.error {
+    font-size: 1.5rem;
+    padding-left: 15px;
+    padding-right: 15px;
+    color: red;
+    background-color: lightgray;
+    border: red solid 2px;
+    border-radius: 10px;
+}
