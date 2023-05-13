@@ -13,7 +13,7 @@ export const getAllBlogs = async () => {
     return response.data
 }
 
-export const createBlog = async (blogContents) => {
+export const postBlog = async (blogContents) => {
     const config = {
         headers: { Authorization: token },
     }
@@ -22,7 +22,7 @@ export const createBlog = async (blogContents) => {
     return response.data
 }
 
-export const updateBlog = async (blogContents) => {
+export const putBlog = async (blogContents) => {
     const config = {
         headers: { Authorization: token },
     }

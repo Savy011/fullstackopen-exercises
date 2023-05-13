@@ -2,11 +2,18 @@ import { useState, useEffect, useRef, useContext } from 'react'
 import Blog from './components/Blog'
 import BlogForm from './components/BlogForm'
 import Toggleable from './components/Toggleable'
+// eslint-disable-next-line no-unused-vars
 import blogService from './services/blogs'
 import loginService from './services/login'
 import NotifContext from './utils/NotifContext'
 import { useMutation, useQuery, useQueryClient } from 'react-query'
-import { createBlog, getAllBlogs, setToken } from './utils/requests'
+import {
+    postBlog,
+    getAllBlogs,
+    setToken,
+    putBlog,
+    removeBlog,
+} from './utils/requests'
 
 const App = () => {
     // eslint-disable-next-line no-unused-vars
@@ -20,13 +27,33 @@ const App = () => {
     const queryClient = useQueryClient()
 
     const result = useQuery('blogs', getAllBlogs, { retry: 1 })
-    const createBlogMutation = useMutation(createBlog, {
+    const blogs = result.data
+
+    const createBlogMutation = useMutation(postBlog, {
         onSuccess: (newBlog) => {
             const blogsList = queryClient.getQueryData('blogs')
             queryClient.invalidateQueries('blogs', blogsList.concat(newBlog))
         },
     })
-    const blogs = result.data
+
+    const updateBlogMutation = useMutation(putBlog, {
+        onSuccess: (votedBlog) => {
+            const prevBlogs = queryClient.getQueryData('blogs')
+            const updatedBlog = prevBlogs.find((b) => b.id === votedBlog.id)
+            updatedBlog.votes = votedBlog.likes
+            queryClient.invalidateQueries('blogs', prevBlogs)
+        },
+    })
+
+    const deleteBlogMutation = useMutation(removeBlog, {
+        onSuccess: (deletedBlog) => {
+            const prevBlogs = queryClient.getQueryData('blogs')
+            const filteredBlogs = prevBlogs.filter(
+                (b) => b.id !== deletedBlog.id
+            )
+            queryClient.invalidateQueries('blogs', filteredBlogs)
+        },
+    })
 
     useEffect(() => {
         const loggedUserJSON = window.localStorage.getItem('loggedBlogAppUser')
@@ -93,10 +120,7 @@ const App = () => {
 
     const updateBlog = async (blogObj) => {
         try {
-            await blogService.update(blogObj)
-            await blogService
-                .getAll()
-                .then((updatedBlogs) => setBlogs(updatedBlogs))
+            updateBlogMutation.mutateAsync(blogObj)
             dispatch({
                 type: 'SET',
                 payload: `Liked '${blogObj.title}' by ${blogObj.author}`,
@@ -104,7 +128,7 @@ const App = () => {
             setTimeout(() => {
                 dispatch({ type: 'CLEAR' })
             }, 5000)
-        } catch (exception) {
+        } catch (err) {
             dispatch({
                 type: 'SET',
                 payload: `Error occured while updating '${blogObj.title}'`,
@@ -112,11 +136,37 @@ const App = () => {
             setTimeout(() => {
                 dispatch({ type: 'CLEAR' })
             }, 5000)
-            console.error(exception)
+            console.error(err)
         }
     }
 
     const deleteBlog = async (blogObj) => {
+        try {
+            const confirmation = window.confirm(`Delete ${blogObj.title}?`)
+
+            if (confirmation) {
+                deleteBlogMutation.mutateAsync(blogObj)
+                dispatch({
+                    type: 'SET',
+                    payload: `Deleted '${blogObj.title}' by ${blogObj.author}`,
+                })
+                setTimeout(() => {
+                    dispatch({ type: 'CLEAR' })
+                }, 5000)
+            }
+            dispatch({
+                type: 'SET',
+                payload: 'Deletition Cancelled',
+            })
+            setTimeout(() => {
+                dispatch({ type: 'CLEAR' })
+            }, 5000)
+        } catch (err) {
+            console.log(err)
+        }
+    }
+
+    /*const deleteBlog = async (blogObj) => {
         try {
             const confirmation = window.confirm(`Delete ${blogObj.title}`)
             if (confirmation) {
@@ -142,7 +192,7 @@ const App = () => {
             }, 5000)
             console.error(exception)
         }
-    }
+    }*/
 
     const NotifBox = () => {
         const style = {
