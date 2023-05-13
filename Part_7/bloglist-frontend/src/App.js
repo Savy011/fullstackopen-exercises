@@ -5,21 +5,28 @@ import Toggleable from './components/Toggleable'
 import blogService from './services/blogs'
 import loginService from './services/login'
 import NotifContext from './utils/NotifContext'
+import { useMutation, useQuery, useQueryClient } from 'react-query'
+import { createBlog, getAllBlogs, setToken } from './utils/requests'
 
 const App = () => {
-    const [blogs, setBlogs] = useState([])
+    // eslint-disable-next-line no-unused-vars
+    const [blogsList, setBlogs] = useState([])
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
     const [user, setUser] = useState(null)
     const [notif, dispatch] = useContext(NotifContext)
 
     const blogFormRef = useRef()
+    const queryClient = useQueryClient()
 
-    useEffect(() => {
-        blogService.getAll().then((blogs) => {
-            setBlogs(blogs)
-        })
-    }, [])
+    const result = useQuery('blogs', getAllBlogs, { retry: 1 })
+    const createBlogMutation = useMutation(createBlog, {
+        onSuccess: (newBlog) => {
+            const blogsList = queryClient.getQueryData('blogs')
+            queryClient.invalidateQueries('blogs', blogsList.concat(newBlog))
+        },
+    })
+    const blogs = result.data
 
     useEffect(() => {
         const loggedUserJSON = window.localStorage.getItem('loggedBlogAppUser')
@@ -27,7 +34,7 @@ const App = () => {
         if (loggedUserJSON) {
             const user = JSON.parse(loggedUserJSON)
             setUser(user)
-            blogService.setToken(user.token)
+            setToken(user.token)
         }
     }, [])
 
@@ -40,7 +47,7 @@ const App = () => {
                 'loggedBlogAppUser',
                 JSON.stringify(user)
             )
-            blogService.setToken(user.token)
+            setToken(user.token)
             setUser(user)
             setUsername('')
             setPassword('')
@@ -61,10 +68,10 @@ const App = () => {
     }
 
     const createBlog = async (blogObj) => {
+        blogFormRef.current.toggleVisibility()
+
         try {
-            blogFormRef.current.toggleVisibility()
-            await blogService.create(blogObj)
-            await blogService.getAll().then((newBlogs) => setBlogs(newBlogs))
+            createBlogMutation.mutateAsync(blogObj)
             dispatch({
                 type: 'SET',
                 payload: `Blog '${blogObj.title}' by ${blogObj.author} added!`,
@@ -72,7 +79,7 @@ const App = () => {
             setTimeout(() => {
                 dispatch({ type: 'CLEAR' })
             }, 5000)
-        } catch (exception) {
+        } catch (err) {
             dispatch({
                 type: 'SET',
                 payload: `Error occured while creating '${blogObj.title}'`,
@@ -80,7 +87,7 @@ const App = () => {
             setTimeout(() => {
                 dispatch({ type: 'CLEAR' })
             }, 5000)
-            console.error(exception)
+            console.error(err)
         }
     }
 
@@ -234,6 +241,14 @@ const App = () => {
             </div>
         </div>
     )
+
+    if (result.isLoading) {
+        return <div>Loading Data...</div>
+    }
+
+    if (result.isError) {
+        return <div>Error Connecting to Blogs Backend</div>
+    }
 
     return <div>{user === null ? loginForm() : blogList()}</div>
 }
