@@ -10,7 +10,7 @@ const BlogForm = ({ createBlog }) => {
         createBlog: propTypes.func.isRequired,
     }
 
-    const addBlog = (event) => {
+    const addBlog = event => {
         event.preventDefault()
         createBlog({ title, author, url })
 

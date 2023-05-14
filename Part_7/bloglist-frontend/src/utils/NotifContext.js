@@ -1,4 +1,4 @@
-import { useReducer, createContext } from 'react'
+import { useReducer, createContext, useContext } from 'react'
 
 const notifReducer = (state, action) => {
     switch (action.type) {
@@ -13,7 +13,7 @@ const notifReducer = (state, action) => {
 
 const NotifContext = createContext()
 
-export const NotifContextProvider = (props) => {
+export const NotifContextProvider = props => {
     const [notif, notifDispatch] = useReducer(notifReducer, '')
 
     return (
@@ -21,6 +21,20 @@ export const NotifContextProvider = (props) => {
             {props.children}
         </NotifContext.Provider>
     )
+}
+
+export const useNotification = () => {
+    // eslint-disable-next-line no-unused-vars
+    const [notif, notifDispatch] = useContext(NotifContext)
+
+    const setNotif = (message, time) => {
+        notifDispatch({ type: 'SET', payload: message })
+        setTimeout(() => {
+            notifDispatch({ type: 'CLEAR' })
+        }, time)
+    }
+
+    return setNotif
 }
 
 export default NotifContext

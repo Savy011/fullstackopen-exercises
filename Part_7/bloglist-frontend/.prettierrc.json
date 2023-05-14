@@ -4,7 +4,7 @@
     "singleQuote": true,
     "bracketSpacing": true,
     "bracketSameLine": false,
-    "arrowParens": "always",
+    "arrowParens": "avoid",
     "endOfLine": "lf",
     "singleAttributePerLine": true
 }

@@ -2,10 +2,8 @@ import { useState, useEffect, useRef, useContext } from 'react'
 import Blog from './components/Blog'
 import BlogForm from './components/BlogForm'
 import Toggleable from './components/Toggleable'
-// eslint-disable-next-line no-unused-vars
-import blogService from './services/blogs'
 import loginService from './services/login'
-import NotifContext from './utils/NotifContext'
+import NotifContext, { useNotification } from './utils/NotifContext'
 import { useMutation, useQuery, useQueryClient } from 'react-query'
 import {
     postBlog,
@@ -14,43 +12,42 @@ import {
     putBlog,
     removeBlog,
 } from './utils/requests'
+import UserContext from './utils/UserContext'
 
 const App = () => {
-    // eslint-disable-next-line no-unused-vars
-    const [blogsList, setBlogs] = useState([])
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
-    const [user, setUser] = useState(null)
-    const [notif, dispatch] = useContext(NotifContext)
+    // eslint-disable-next-line no-unused-vars
+    const [notif, notifDispatch] = useContext(NotifContext)
+    const [user, userDispatch] = useContext(UserContext)
 
     const blogFormRef = useRef()
     const queryClient = useQueryClient()
+    const setNotif = useNotification()
 
     const result = useQuery('blogs', getAllBlogs, { retry: 1 })
     const blogs = result.data
 
     const createBlogMutation = useMutation(postBlog, {
-        onSuccess: (newBlog) => {
+        onSuccess: newBlog => {
             const blogsList = queryClient.getQueryData('blogs')
             queryClient.invalidateQueries('blogs', blogsList.concat(newBlog))
         },
     })
 
     const updateBlogMutation = useMutation(putBlog, {
-        onSuccess: (votedBlog) => {
+        onSuccess: votedBlog => {
             const prevBlogs = queryClient.getQueryData('blogs')
-            const updatedBlog = prevBlogs.find((b) => b.id === votedBlog.id)
+            const updatedBlog = prevBlogs.find(b => b.id === votedBlog.id)
             updatedBlog.votes = votedBlog.likes
             queryClient.invalidateQueries('blogs', prevBlogs)
         },
     })
 
     const deleteBlogMutation = useMutation(removeBlog, {
-        onSuccess: (deletedBlog) => {
+        onSuccess: deletedBlog => {
             const prevBlogs = queryClient.getQueryData('blogs')
-            const filteredBlogs = prevBlogs.filter(
-                (b) => b.id !== deletedBlog.id
-            )
+            const filteredBlogs = prevBlogs.filter(b => b.id !== deletedBlog.id)
             queryClient.invalidateQueries('blogs', filteredBlogs)
         },
     })
@@ -60,139 +57,81 @@ const App = () => {
 
         if (loggedUserJSON) {
             const user = JSON.parse(loggedUserJSON)
-            setUser(user)
-            setToken(user.token)
+            userDispatch({ type: 'SET_USER', payload: user })
+            if (user.token) {
+                setToken(user.token)
+            }
         }
     }, [])
 
-    const handleLogin = async (event) => {
+    const handleLogin = async event => {
         event.preventDefault()
 
         try {
-            const user = await loginService.login({ username, password })
+            const loggedUser = await loginService.login({ username, password })
             window.localStorage.setItem(
                 'loggedBlogAppUser',
-                JSON.stringify(user)
+                JSON.stringify(loggedUser)
             )
-            setToken(user.token)
-            setUser(user)
+            userDispatch({ type: 'SET_USER', payload: loggedUser })
+            setToken(loggedUser.token)
             setUsername('')
             setPassword('')
-        } catch (exception) {
-            dispatch({ type: 'SET', payload: 'Wrong Credentials' })
-            setTimeout(() => {
-                dispatch({ type: 'CLEAR' })
-            }, 5000)
+        } catch (err) {
+            setNotif('Wrong Credentials', 5000)
 
-            console.error(exception)
+            console.error(err)
         }
     }
 
-    const handleLogout = (event) => {
+    const handleLogout = event => {
         event.preventDefault()
         window.localStorage.removeItem('loggedBlogAppUser')
-        setUser(null)
+        userDispatch({ type: 'CLEAR_USER' })
     }
 
-    const createBlog = async (blogObj) => {
+    const createBlog = async blogObj => {
         blogFormRef.current.toggleVisibility()
 
         try {
             createBlogMutation.mutateAsync(blogObj)
-            dispatch({
-                type: 'SET',
-                payload: `Blog '${blogObj.title}' by ${blogObj.author} added!`,
-            })
-            setTimeout(() => {
-                dispatch({ type: 'CLEAR' })
-            }, 5000)
+            setNotif(
+                `Blog '${blogObj.title}' by ${blogObj.author} added!`,
+                5000
+            )
         } catch (err) {
-            dispatch({
-                type: 'SET',
-                payload: `Error occured while creating '${blogObj.title}'`,
-            })
-            setTimeout(() => {
-                dispatch({ type: 'CLEAR' })
-            }, 5000)
+            setNotif(`Error occured while creating '${blogObj.title}'`, 5000)
             console.error(err)
         }
     }
 
-    const updateBlog = async (blogObj) => {
+    const updateBlog = async blogObj => {
         try {
             updateBlogMutation.mutateAsync(blogObj)
-            dispatch({
-                type: 'SET',
-                payload: `Liked '${blogObj.title}' by ${blogObj.author}`,
-            })
-            setTimeout(() => {
-                dispatch({ type: 'CLEAR' })
-            }, 5000)
+            setNotif(`Liked '${blogObj.title}' by ${blogObj.author}`, 5000)
         } catch (err) {
-            dispatch({
-                type: 'SET',
-                payload: `Error occured while updating '${blogObj.title}'`,
-            })
-            setTimeout(() => {
-                dispatch({ type: 'CLEAR' })
-            }, 5000)
+            setNotif(`Error occured while updating '${blogObj.title}'`, 5000)
             console.error(err)
         }
     }
 
-    const deleteBlog = async (blogObj) => {
+    const deleteBlog = async blogObj => {
         try {
             const confirmation = window.confirm(`Delete ${blogObj.title}?`)
 
             if (confirmation) {
                 deleteBlogMutation.mutateAsync(blogObj)
-                dispatch({
-                    type: 'SET',
-                    payload: `Deleted '${blogObj.title}' by ${blogObj.author}`,
-                })
-                setTimeout(() => {
-                    dispatch({ type: 'CLEAR' })
-                }, 5000)
+                setNotif(
+                    `Deleted '${blogObj.title}' by ${blogObj.author}`,
+                    5000
+                )
             }
-            dispatch({
-                type: 'SET',
-                payload: 'Deletition Cancelled',
-            })
-            setTimeout(() => {
-                dispatch({ type: 'CLEAR' })
-            }, 5000)
+            setNotif('Deletition Cancelled', 5000)
         } catch (err) {
+            setNotif(`Error occured while Deleting '${blogObj.title}'`, 5000)
             console.log(err)
         }
     }
-
-    /*const deleteBlog = async (blogObj) => {
-        try {
-            const confirmation = window.confirm(`Delete ${blogObj.title}`)
-            if (confirmation) {
-                await blogService.remove(blogObj)
-                await blogService
-                    .getAll()
-                    .then((updatedBlogs) => setBlogs(updatedBlogs))
-            }
-            dispatch({
-                type: 'SET',
-                payload: `Deleted '${blogObj.title}' by ${blogObj.author}`,
-            })
-            setTimeout(() => {
-                dispatch({ type: 'CLEAR' })
-            }, 5000)
-        } catch (exception) {
-            dispatch({
-                type: 'SET',
-                payload: `Error occured while deleting '${blogObj.title}'`,
-            })
-            setTimeout(() => {
-                dispatch({ type: 'CLEAR' })
-            }, 5000)
-            console.error(exception)
-        }
-    }*/
 
     const NotifBox = () => {
         const style = {
@@ -279,7 +218,7 @@ const App = () => {
             <div>
                 {blogs
                     .sort((a, b) => b.likes - a.likes)
-                    .map((blog) => (
+                    .map(blog => (
                         <Blog
                             key={blog.id}
                             blog={blog}

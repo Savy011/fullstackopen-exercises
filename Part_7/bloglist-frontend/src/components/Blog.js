@@ -15,7 +15,7 @@ const Blog = ({ blog, user, updateBlog, deleteBlog }) => {
     const showWhenVisible = { display: visible ? '' : 'none' }
     const buttonLabel = visible ? 'Hide' : 'Show'
 
-    const likeBlog = (event) => {
+    const likeBlog = event => {
         event.preventDefault()
 
         const updatedBlog = {
@@ -27,7 +27,7 @@ const Blog = ({ blog, user, updateBlog, deleteBlog }) => {
         setBlogObj(updatedBlog)
     }
 
-    const removeBlog = (event) => {
+    const removeBlog = event => {
         event.preventDefault()
         deleteBlog(blogObj)
     }
