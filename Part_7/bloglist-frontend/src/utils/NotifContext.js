@@ -23,6 +23,18 @@ export const NotifContextProvider = props => {
     )
 }
 
+export const useNotifValue = () => {
+    const notifAndDispatch = useContext(NotifContext)
+
+    return notifAndDispatch[0]
+}
+
+export const useNotifDispatch = () => {
+    const notifAndDispatch = useContext(NotifContext)
+
+    return notifAndDispatch[1]
+}
+
 export const useNotification = () => {
     // eslint-disable-next-line no-unused-vars
     const [notif, notifDispatch] = useContext(NotifContext)

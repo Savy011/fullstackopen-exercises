@@ -1,63 +1,70 @@
-import { useState } from 'react'
-import propTypes from 'prop-types'
+import { useField } from '../utils/hooks'
+import { useMutation, useQueryClient } from 'react-query'
+import { postBlog } from '../utils/requests'
+import { useNotification } from '../utils/NotifContext'
 
-const BlogForm = ({ createBlog }) => {
-    const [title, setTitle] = useState('')
-    const [author, setAuthor] = useState('')
-    const [url, setUrl] = useState('')
+const BlogForm = () => {
+    const queryClient = useQueryClient()
+    const setNotif = useNotification()
+    const title = useField('text')
+    const author = useField('text')
+    const url = useField('text')
 
-    BlogForm.propTypes = {
-        createBlog: propTypes.func.isRequired,
+    const removeReset = obj => {
+        // eslint-disable-next-line no-unused-vars
+        const { reset, ...retObj } = obj
+
+        return retObj
+    }
+
+    const createBlogMutation = useMutation(postBlog, {
+        onSuccess: newBlog => {
+            const blogsList = queryClient.getQueryData('blogs')
+            queryClient.invalidateQueries('blogs', blogsList.concat(newBlog))
+        },
+    })
+
+    const createBlog = async blogObj => {
+        try {
+            createBlogMutation.mutateAsync(blogObj)
+            setNotif(
+                `Blog '${blogObj.title}' by ${blogObj.author} added!`,
+                5000
+            )
+        } catch (err) {
+            setNotif(`Error occured while creating '${blogObj.title}'`, 5000)
+            console.log(err)
+        }
     }
 
     const addBlog = event => {
         event.preventDefault()
-        createBlog({ title, author, url })
-
-        setTitle('')
-        setAuthor('')
-        setUrl('')
+        createBlog({
+            title: title.value,
+            author: author.value,
+            url: url.value,
+        })
+        title.reset()
+        author.reset()
+        url.reset()
     }
 
     return (
         <form onSubmit={addBlog}>
             <p>
-                Title: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                <input
-                    type="text"
-                    value={title}
-                    id="title-input"
-                    placeholder="Blog Title"
-                    onChange={({ target }) => setTitle(target.value)}
-                />
+                Title: &nbsp;
+                <input {...removeReset(title)} />
             </p>
             <p>
                 Author: &nbsp;
-                <input
-                    type="text"
-                    value={author}
-                    id="author-input"
-                    placeholder="Blog Author"
-                    onChange={({ target }) => setAuthor(target.value)}
-                />
+                <input {...removeReset(author)} />
             </p>
             <p>
-                URL: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                <input
-                    type="text"
-                    value={url}
-                    id="url-input"
-                    placeholder="Blog URL"
-                    onChange={({ target }) => setUrl(target.value)}
-                />
+                URL: &nbsp;
+                <input {...removeReset(url)} />
             </p>
             <p>
-                <button
-                    type="submit"
-                    id="submit-button"
-                >
-                    Create
-                </button>
+                <button type="submit">Create</button>
             </p>
         </form>
     )

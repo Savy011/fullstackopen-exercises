@@ -8,8 +8,6 @@ const Blog = ({ blog, user, updateBlog, deleteBlog }) => {
     Blog.propTypes = {
         blog: propTypes.object.isRequired,
         user: propTypes.object.isRequired,
-        updateBlog: propTypes.func.isRequired,
-        deleteBlog: propTypes.func.isRequired,
     }
 
     const showWhenVisible = { display: visible ? '' : 'none' }
