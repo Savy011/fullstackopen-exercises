@@ -34,6 +34,19 @@ blogsRouter.post('/', userExtracter, async (request, response) => {
 	response.status(201).json(savedBlog)
 })
 
+blogsRouter.post('/:id/comments', userExtracter, async (request, response) => {
+    const { comment } = request.body
+    const blogToAddComment = await Blog.findById(request.params.id)
+
+    console.log(blogToAddComment)
+    blogToAddComment.comments = blogToAddComment.comments.concat(comment)
+    await blogToAddComment.save()
+
+    console.log(blogToAddComment)
+    console.log(comment)
+    response.status(200).end()
+})
+
 blogsRouter.delete('/:id', userExtracter, async (request, response) => {
 	const blogToDel = await Blog.findById(request.params.id)
 

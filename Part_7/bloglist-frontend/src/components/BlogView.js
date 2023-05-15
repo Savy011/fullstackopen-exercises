@@ -97,6 +97,16 @@ const BlogView = () => {
             {user.username === blog.user.username ? (
                 <button onClick={delBlog}>Delete</button>
             ) : null}
+            <h4>Comments</h4>
+            <ul>
+                {blog.comments.length !== 0 ? (
+                    blog.comments.map(comment => (
+                        <li key={comment}>{comment}</li>
+                    ))
+                ) : (
+                    <p>Be the first to comment!</p>
+                )}
+            </ul>
         </div>
     )
 }
