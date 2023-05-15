@@ -1,5 +1,5 @@
 import { useEffect, useContext } from 'react'
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, Navigate } from 'react-router-dom'
 import BlogForm from './components/BlogForm'
 import NotifBox from './components/NotifBox'
 import { useQuery } from 'react-query'
@@ -12,6 +12,7 @@ import Loading from './components/Loading'
 import Error from './components/Error'
 import Users from './components/Users'
 import User from './components/User'
+import BlogView from './components/BlogView'
 
 const App = () => {
     const [LoggedUser, userDispatch] = useContext(UserContext)
@@ -57,6 +58,19 @@ const App = () => {
                 <Route
                     path="/"
                     element={<Blogs />}
+                />
+                <Route
+                    path="/blogs"
+                    element={
+                        <Navigate
+                            replace
+                            to="/"
+                        />
+                    }
+                />
+                <Route
+                    path="/blogs/:id"
+                    element={<BlogView blogs={blogs} />}
                 />
                 <Route
                     path="/users"

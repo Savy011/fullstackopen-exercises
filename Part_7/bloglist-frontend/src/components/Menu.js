@@ -1,9 +1,9 @@
 import { Link } from 'react-router-dom'
-import { useUserDispatch, useUserValue } from '../utils/UserContext'
+import UserContext from '../utils/UserContext'
+import { useContext } from 'react'
 
 const Menu = () => {
-    const user = useUserValue()
-    const dispatch = useUserDispatch()
+    const [user, dispatch] = useContext(UserContext)
 
     const style = {
         paddingRight: 5,
