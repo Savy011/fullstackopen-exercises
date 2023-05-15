@@ -1,4 +1,5 @@
 import { useEffect, useContext } from 'react'
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import BlogForm from './components/BlogForm'
 import NotifBox from './components/NotifBox'
 import { useQuery } from 'react-query'
@@ -9,6 +10,7 @@ import Menu from './components/Menu'
 import BlogList from './components/BlogList'
 import Loading from './components/Loading'
 import Error from './components/Error'
+import Users from './components/Users'
 
 const App = () => {
     const [user, userDispatch] = useContext(UserContext)
@@ -28,23 +30,43 @@ const App = () => {
         }
     }, [])
 
+    const Blogs = () => {
+        return (
+            <div>
+                <h2>Blog List</h2>
+                {result.isLoading ? (
+                    <Loading />
+                ) : result.isError ? (
+                    <Error />
+                ) : (
+                    <BlogList blogs={blogs} />
+                )}
+            </div>
+        )
+    }
+
     if (user === null) return <LoginForm />
 
     return (
-        <div>
+        <Router>
             <Menu />
             <NotifBox />
-            <h4>Create New Blog</h4>
-            <BlogForm />
-            <h2>Blog List</h2>
-            {result.isLoading ? (
-                <Loading />
-            ) : result.isError ? (
-                <Error />
-            ) : (
-                <BlogList blogs={blogs} />
-            )}
-        </div>
+
+            <Routes>
+                <Route
+                    path="/"
+                    element={<Blogs />}
+                />
+                <Route
+                    path="/users"
+                    element={<Users />}
+                />
+                <Route
+                    path="/create"
+                    element={<BlogForm />}
+                />
+            </Routes>
+        </Router>
     )
 }
 

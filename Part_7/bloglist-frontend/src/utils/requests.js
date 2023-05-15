@@ -13,6 +13,12 @@ export const getAllBlogs = async () => {
     return response.data
 }
 
+export const getAllUsers = async () => {
+    const response = await axios.get('http://localhost:3001/api/users')
+
+    return response.data
+}
+
 export const postBlog = async blogContents => {
     const config = {
         headers: { Authorization: token },

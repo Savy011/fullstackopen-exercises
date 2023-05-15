@@ -31,7 +31,7 @@ const LoginForm = () => {
                 JSON.stringify(loggedUser)
             )
             dispatch({ type: 'SET_USER', payload: loggedUser })
-            setToken(loggedUser.setToken)
+            setToken(loggedUser.token)
             username.reset()
             password.reset()
         } catch (err) {
