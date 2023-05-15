@@ -18,3 +18,10 @@ export const useField = type => {
         reset,
     }
 }
+
+export const removeReset = obj => {
+    // eslint-disable-next-line no-unused-vars
+    const { reset, ...retObj } = obj
+
+    return retObj
+}

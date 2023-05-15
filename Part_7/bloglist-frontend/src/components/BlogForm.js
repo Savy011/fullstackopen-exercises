@@ -1,4 +1,4 @@
-import { useField } from '../utils/hooks'
+import { useField, removeReset } from '../utils/hooks'
 import { useMutation, useQueryClient } from 'react-query'
 import { postBlog } from '../utils/requests'
 import { useNotification } from '../utils/NotifContext'
@@ -11,13 +11,6 @@ const BlogForm = () => {
     const title = useField('text')
     const author = useField('text')
     const url = useField('text')
-
-    const removeReset = obj => {
-        // eslint-disable-next-line no-unused-vars
-        const { reset, ...retObj } = obj
-
-        return retObj
-    }
 
     const createBlogMutation = useMutation(postBlog, {
         onSuccess: newBlog => {

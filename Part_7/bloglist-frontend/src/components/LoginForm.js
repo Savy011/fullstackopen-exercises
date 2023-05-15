@@ -1,5 +1,5 @@
 import NotifBox from './NotifBox'
-import { useField } from '../utils/hooks'
+import { useField, removeReset } from '../utils/hooks'
 import { useNotification } from '../utils/NotifContext'
 import loginService from '../services/login'
 import { setToken } from '../utils/requests'
@@ -10,13 +10,6 @@ const LoginForm = () => {
     const password = useField('password')
     const setNotif = useNotification()
     const dispatch = useUserDispatch()
-
-    const removeReset = obj => {
-        // eslint-disable-next-line no-unused-vars
-        const { reset, ...retObj } = obj
-
-        return retObj
-    }
 
     const handleLogin = async event => {
         event.preventDefault()

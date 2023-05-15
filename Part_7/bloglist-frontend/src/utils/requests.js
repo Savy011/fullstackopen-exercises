@@ -28,6 +28,19 @@ export const postBlog = async blogContents => {
     return response.data
 }
 
+export const postComment = async commentObj => {
+    const config = {
+        headers: { Authorization: token },
+    }
+    const response = await axios.post(
+        `${baseUrl}/${commentObj.id}/comments`,
+        commentObj,
+        config
+    )
+
+    return response.data
+}
+
 export const putBlog = async blogContents => {
     const config = {
         headers: { Authorization: token },
