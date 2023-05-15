@@ -1,5 +1,5 @@
 import { useEffect, useContext } from 'react'
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import { Routes, Route } from 'react-router-dom'
 import BlogForm from './components/BlogForm'
 import NotifBox from './components/NotifBox'
 import { useQuery } from 'react-query'
@@ -11,9 +11,10 @@ import BlogList from './components/BlogList'
 import Loading from './components/Loading'
 import Error from './components/Error'
 import Users from './components/Users'
+import User from './components/User'
 
 const App = () => {
-    const [user, userDispatch] = useContext(UserContext)
+    const [LoggedUser, userDispatch] = useContext(UserContext)
 
     const result = useQuery('blogs', getAllBlogs, { retry: 1 })
     const blogs = result.data
@@ -45,10 +46,10 @@ const App = () => {
         )
     }
 
-    if (user === null) return <LoginForm />
+    if (LoggedUser === null) return <LoginForm />
 
     return (
-        <Router>
+        <div>
             <Menu />
             <NotifBox />
 
@@ -62,11 +63,15 @@ const App = () => {
                     element={<Users />}
                 />
                 <Route
+                    path="/users/:id"
+                    element={<User />}
+                />
+                <Route
                     path="/create"
                     element={<BlogForm />}
                 />
             </Routes>
-        </Router>
+        </div>
     )
 }
 
