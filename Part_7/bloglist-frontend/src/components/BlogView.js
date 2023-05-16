@@ -6,6 +6,23 @@ import { useField, removeReset } from '../utils/hooks'
 import { useQuery, useQueryClient, useMutation } from 'react-query'
 import Loading from './Loading'
 import Error from './Error'
+import {
+    Card,
+    Typography,
+    Button,
+    Grid,
+    TextField,
+    List,
+    ListItem,
+    ListItemText,
+} from '@mui/material'
+import {
+    ThumbUpRounded as LikeIcon,
+    Delete as DeleteIcon,
+    AddComment as AddCommentIcon,
+    Create as CreateIcon,
+    ShortText as ListIcon,
+} from '@mui/icons-material'
 
 const BlogView = () => {
     const { id } = useParams()
@@ -32,7 +49,6 @@ const BlogView = () => {
         },
     })
 
-    // eslint-disable-next-line no-unused-vars
     const addCommentMutuation = useMutation(postComment, {
         onSuccess: () => {
             queryClient.invalidateQueries('blogs')
@@ -42,9 +58,17 @@ const BlogView = () => {
     const updateBlog = async blogObj => {
         try {
             updateBlogMutation.mutateAsync(blogObj)
-            setNotif(`Liked '${blogObj.title}' by ${blogObj.author}`, 5000)
+            setNotif(
+                `Liked '${blogObj.title}' by ${blogObj.author}`,
+                'success',
+                5000
+            )
         } catch (err) {
-            setNotif(`Error occured while updating '${blogObj.title}'`, 5000)
+            setNotif(
+                `Error occured while updating '${blogObj.title}'`,
+                'error',
+                5000
+            )
             console.error(err)
         }
     }
@@ -58,17 +82,22 @@ const BlogView = () => {
                 navigate('/')
                 setNotif(
                     `Deleted '${blogObj.title}' by ${blogObj.author}`,
+                    'error',
                     5000
                 )
             } else {
-                setNotif('Deletion Cancelled', 5000)
+                setNotif('Deletion Cancelled', 'info', 5000)
             }
         } catch (err) {
-            setNotif(`Error occured while Deleting '${blogObj.title}'`, 5000)
+            setNotif(
+                `Error occured while Deleting '${blogObj.title}'`,
+                'error',
+                5000
+            )
             console.log(err)
         }
     }
-
+    // eslint-disable-next-line no-unused-vars
     const likeBlog = () => {
         const updatedBlog = {
             ...blog,
@@ -82,7 +111,6 @@ const BlogView = () => {
         deleteBlog(blog)
     }
 
-    // eslint-disable-next-line no-unused-vars
     const addComment = () => {
         const commentObj = {
             id: blog.id,
@@ -99,36 +127,87 @@ const BlogView = () => {
     if (result.isError) return <Error />
 
     return (
-        <div>
-            <h2>{blog.title}</h2>
-            <p>
+        <Card
+            sx={{
+                mt: 2,
+                p: 2,
+                background: '#fffa',
+                borderRadius: 3,
+                border: 'solid',
+            }}
+        >
+            <Typography
+                variant="h4"
+                sx={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    m: 1,
+                    fontFamily: 'Spline Sans',
+                }}
+            >
+                {blog.title}
+            </Typography>
+            <Typography>
                 <b>Author:</b> {blog.author}
-            </p>
-            <p>
-                <b>Link:</b> {blog.url}
-            </p>
-            <p>
-                Has {blog.likes} Likes &nbsp;
-                <button onClick={likeBlog}>Like</button>
-            </p>
-            <p>Added by {blog.user.name}</p>
+            </Typography>
+            <Typography>
+                <b>Link:</b> <a href={blog.url}>{blog.url}</a>
+            </Typography>
+            <Grid
+                container
+                alignItems="center"
+            >
+                <Grid item>
+                    <Typography>Has {blog.likes} Likes &nbsp;</Typography>
+                </Grid>
+                <Grid item>
+                    <Button onClick={likeBlog}>
+                        <LikeIcon />
+                    </Button>
+                </Grid>
+            </Grid>
+            <Typography>Added by {blog.user.name}</Typography>
             {user.username === blog.user.username ? (
-                <button onClick={delBlog}>Delete</button>
+                <Button
+                    onClick={delBlog}
+                    startIcon={<DeleteIcon />}
+                >
+                    Delete
+                </Button>
             ) : null}
-            <h4>Comments</h4>
-            <input {...removeReset(comment)} />
+            <Typography variant="h5">Comments:</Typography>
+            <TextField
+                variant="standard"
+                {...removeReset(comment)}
+            />
             &nbsp;
-            <button onClick={addComment}>Add Comment</button>
-            <ul>
+            <Button
+                onClick={addComment}
+                startIcon={<AddCommentIcon />}
+            >
+                Add Comment
+            </Button>
+            <List>
                 {blog.comments.length !== 0 ? (
                     blog.comments.map(comment => (
-                        <li key={comment}>{comment}</li>
+                        <ListItem
+                            key={comment}
+                            disablePadding
+                        >
+                            <ListIcon fontSize="small" />
+                            <ListItemText primary={comment} />
+                        </ListItem>
                     ))
                 ) : (
-                    <p>Be the first to comment!</p>
+                    <Typography
+                        variant="subtitle"
+                        fontSize="14"
+                    >
+                        <CreateIcon fontSize="small" /> Be the first to comment!
+                    </Typography>
                 )}
-            </ul>
-        </div>
+            </List>
+        </Card>
     )
 }
 

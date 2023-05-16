@@ -3,6 +3,8 @@ import { useMutation, useQueryClient } from 'react-query'
 import { postBlog } from '../utils/requests'
 import { useNotification } from '../utils/NotifContext'
 import { useNavigate } from 'react-router-dom'
+import Button from '@mui/material/Button'
+import { Card, TextField, Box, Typography } from '@mui/material'
 
 const BlogForm = () => {
     const queryClient = useQueryClient()
@@ -24,10 +26,15 @@ const BlogForm = () => {
             createBlogMutation.mutateAsync(blogObj)
             setNotif(
                 `Blog '${blogObj.title}' by ${blogObj.author} added!`,
+                'success',
                 5000
             )
         } catch (err) {
-            setNotif(`Error occured while creating '${blogObj.title}'`, 5000)
+            setNotif(
+                `Error occured while creating '${blogObj.title}'`,
+                'error',
+                5000
+            )
             console.log(err)
         }
     }
@@ -45,26 +52,86 @@ const BlogForm = () => {
         url.reset()
     }
 
+    const resetField = event => {
+        event.preventDefault()
+        title.reset()
+        author.reset()
+        url.reset()
+    }
+
     return (
         <div>
-            <h4>Create New Blog</h4>
-            <form onSubmit={addBlog}>
-                <p>
-                    Title: &nbsp;
-                    <input {...removeReset(title)} />
-                </p>
-                <p>
-                    Author: &nbsp;
-                    <input {...removeReset(author)} />
-                </p>
-                <p>
-                    URL: &nbsp;
-                    <input {...removeReset(url)} />
-                </p>
-                <p>
-                    <button type="submit">Create</button>
-                </p>
-            </form>
+            <Card
+                sx={{
+                    mt: 2,
+                    background: '#fffa',
+                    borderRadius: 3,
+                    border: 'solid',
+                }}
+            >
+                <Typography
+                    variant="h4"
+                    sx={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        m: 1,
+                        fontFamily: 'Spline Sans',
+                    }}
+                >
+                    Create New Blog
+                </Typography>
+                <form onSubmit={addBlog}>
+                    <Box sx={{ m: 2 }}>
+                        <div>
+                            <TextField
+                                sx={{ mt: 1, mb: 1 }}
+                                fullWidth
+                                label="Title"
+                                {...removeReset(title)}
+                            />
+                        </div>
+                        <div>
+                            <TextField
+                                sx={{ mt: 1, mb: 1 }}
+                                fullWidth
+                                label="Author"
+                                {...removeReset(author)}
+                            />
+                        </div>
+                        <div>
+                            <TextField
+                                sx={{ mt: 1, mb: 1 }}
+                                fullWidth
+                                label="URL"
+                                {...removeReset(url)}
+                            />
+                        </div>
+                        <div
+                            style={{
+                                margin: 1,
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                            }}
+                        >
+                            <Button
+                                sx={{ mt: 1, mb: 1 }}
+                                variant="contained"
+                                type="submit"
+                            >
+                                Create
+                            </Button>
+                            <Button
+                                sx={{ mt: 1, mb: 1 }}
+                                variant="outlined"
+                                type="reset"
+                                onClick={resetField}
+                            >
+                                Reset
+                            </Button>
+                        </div>
+                    </Box>
+                </form>
+            </Card>
         </div>
     )
 }

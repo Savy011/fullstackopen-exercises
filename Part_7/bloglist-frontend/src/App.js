@@ -6,13 +6,14 @@ import { useQuery } from 'react-query'
 import { getAllBlogs, setToken } from './utils/requests'
 import UserContext from './utils/UserContext'
 import LoginForm from './components/LoginForm'
-import Menu from './components/Menu'
+import TopMenu from './components/Menu'
 import BlogList from './components/BlogList'
 import Loading from './components/Loading'
 import Error from './components/Error'
 import Users from './components/Users'
 import User from './components/User'
 import BlogView from './components/BlogView'
+import { Container, Typography } from '@mui/material'
 
 const App = () => {
     const [LoggedUser, userDispatch] = useContext(UserContext)
@@ -35,7 +36,12 @@ const App = () => {
     const Blogs = () => {
         return (
             <div>
-                <h2>Blog List</h2>
+                <Typography
+                    variant="h4"
+                    sx={{ m: 2 }}
+                >
+                    Blog List
+                </Typography>
                 {result.isLoading ? (
                     <Loading />
                 ) : result.isError ? (
@@ -50,42 +56,46 @@ const App = () => {
     if (LoggedUser === null) return <LoginForm />
 
     return (
-        <div>
-            <Menu />
-            <NotifBox />
+        <Container>
+            <div>
+                <div className="app-container">
+                    <TopMenu />
+                    <NotifBox />
 
-            <Routes>
-                <Route
-                    path="/"
-                    element={<Blogs />}
-                />
-                <Route
-                    path="/blogs"
-                    element={
-                        <Navigate
-                            replace
-                            to="/"
+                    <Routes>
+                        <Route
+                            path="/"
+                            element={<Blogs />}
                         />
-                    }
-                />
-                <Route
-                    path="/blogs/:id"
-                    element={<BlogView blogs={blogs} />}
-                />
-                <Route
-                    path="/users"
-                    element={<Users />}
-                />
-                <Route
-                    path="/users/:id"
-                    element={<User />}
-                />
-                <Route
-                    path="/create"
-                    element={<BlogForm />}
-                />
-            </Routes>
-        </div>
+                        <Route
+                            path="/blogs"
+                            element={
+                                <Navigate
+                                    replace
+                                    to="/"
+                                />
+                            }
+                        />
+                        <Route
+                            path="/blogs/:id"
+                            element={<BlogView blogs={blogs} />}
+                        />
+                        <Route
+                            path="/users"
+                            element={<Users />}
+                        />
+                        <Route
+                            path="/users/:id"
+                            element={<User />}
+                        />
+                        <Route
+                            path="/create"
+                            element={<BlogForm />}
+                        />
+                    </Routes>
+                </div>
+            </div>
+        </Container>
     )
 }
 

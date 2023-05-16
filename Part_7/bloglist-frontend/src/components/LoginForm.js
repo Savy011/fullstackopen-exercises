@@ -4,6 +4,7 @@ import { useNotification } from '../utils/NotifContext'
 import loginService from '../services/login'
 import { setToken } from '../utils/requests'
 import { useUserDispatch } from '../utils/UserContext'
+import { Card, TextField, Typography, Box, Button } from '@mui/material'
 
 const LoginForm = () => {
     const username = useField('text')
@@ -36,21 +37,50 @@ const LoginForm = () => {
 
     return (
         <div>
-            <h2>Log-in to the Application</h2>
-            <NotifBox />
-            <form onSubmit={handleLogin}>
-                <p>
-                    Username:&nbsp;
-                    <input {...removeReset(username)} />
-                </p>
-                <p>
-                    Password:&nbsp;
-                    <input {...removeReset(password)} />
-                </p>
-                <p>
-                    <button type="submit">Log In</button>
-                </p>
-            </form>
+            <Card
+                sx={{
+                    mt: 2,
+                    background: '#fffa',
+                    borderRadius: 3,
+                    border: 'solid',
+                }}
+            >
+                <Typography
+                    variant="h4"
+                    sx={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        m: 1,
+                        fontFamily: 'Spline Sans',
+                    }}
+                >
+                    Log-in to the Application
+                </Typography>
+                <NotifBox />
+                <form onSubmit={handleLogin}>
+                    <Box sx={{ m: 2 }}>
+                        <TextField
+                            sx={{ mt: 1, mb: 1 }}
+                            fullWidth
+                            label="Username"
+                            {...removeReset(username)}
+                        />
+                        <TextField
+                            sx={{ mt: 1, mb: 1 }}
+                            fullWidth
+                            label="Password"
+                            {...removeReset(password)}
+                        />
+                        <Button
+                            sx={{ mt: 1, mb: 1 }}
+                            variant="contained"
+                            type="submit"
+                        >
+                            Log In
+                        </Button>
+                    </Box>
+                </form>
+            </Card>
         </div>
     )
 }
