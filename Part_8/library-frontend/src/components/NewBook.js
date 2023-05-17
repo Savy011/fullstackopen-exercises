@@ -1,21 +1,26 @@
+import { useMutation } from '@apollo/client'
 import { useState } from 'react'
+import { ADD_BOOK, ALL_AUTHORS, ALL_BOOKS } from '../queries'
+import { useNavigate } from 'react-router-dom'
 
-const NewBook = (props) => {
+const NewBook = () => {
+    const navigate = useNavigate()
     const [title, setTitle] = useState('')
     const [author, setAuthor] = useState('')
     const [published, setPublished] = useState('')
     const [genre, setGenre] = useState('')
     const [genres, setGenres] = useState([])
 
-    if (!props.show) {
-        return null
-    }
+    const [ addBook ] = useMutation(ADD_BOOK, {
+        refetchQueries: [ { query: ALL_BOOKS }, { query: ALL_AUTHORS } ]
+    })
 
     const submit = async (event) => {
         event.preventDefault()
 
-        console.log('add book...')
+        await addBook({ variables: { title, author, published: parseInt(published), genres } })
 
+        navigate('/books')
         setTitle('')
         setPublished('')
         setAuthor('')
@@ -51,7 +56,7 @@ const NewBook = (props) => {
             </div>
             <div>
                 <p>
-                    published
+                    Published:&nbsp;
                     <input
                         type="number"
                         value={published}
@@ -67,12 +72,12 @@ const NewBook = (props) => {
                     />
                     &nbsp;
                     <button onClick={addGenre} type="button">
-                        add genre
+                        Add Genre
                     </button>
                 </p>
             </div>
             <div><p>genres: {genres.join(', ')}</p></div>
-            <button type="submit">create book</button>
+            <button type="submit">Add Book</button>
         </form>
         </div>
     )
