@@ -105,7 +105,7 @@ const typeDefs = `
 
     type Mutation {
         addBook(title: String!, published: Int!, author: String!, genres: [String!]!): Book!
-        editAuthor(name: String!, setBornTo: Int!): Author!
+        editAuthor(name: String!, setBornTo: Int!): Author
     }
 `
 
@@ -169,10 +169,6 @@ const resolvers = {
 
             const updatedAuthor = { ...author, born: setBornTo }
             authors = authors.map(a => a.name === name ? updatedAuthor : a)
-
-            const booksByAuthor = books.filter(b => b.author === name)
-            booksByAuthor.forEach(b => (b.author = updatedAuthor))
-            updatedAuthor.bookCount = booksByAuthor.length
 
             return updatedAuthor
         }
