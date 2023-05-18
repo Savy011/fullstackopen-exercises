@@ -3,6 +3,7 @@ const { startStandaloneServer } = require('@apollo/server/standalone')
 const mongoose = require('mongoose')
 const Book = require('./models/book')
 const Author = require('./models/author')
+const { GraphQLError } = require('graphql')
 require('dotenv').config()
 
 const MONGODB_URI = process.env.MONGODB_URI
@@ -88,12 +89,33 @@ const resolvers = {
 
             if (!authorInDB) {
                 authorInDB = new Author({ name: author })
-                await authorInDB.save()
+
+                try {
+                    await authorInDB.save()
+                } catch (error) {
+                    throw new GraphQLError('Saving Author failed', {
+                        extensions: {
+                            code: 'BAD_USER_INPUT',
+                            invalidArgs: args.author,
+                            error
+                        }
+                    })
+                }
             }
 
             const book = new Book({ title, published, genres, author: authorInDB._id })
-            
-            await book.save()
+           
+            try {
+                await book.save()
+            } catch (error) {
+                throw new GraphQLError('Saving Book failed', {
+                    extensions: {
+                        code: 'BAD_USER_INPUT',
+                        invalidArgs: args,
+                        error
+                    }
+                })
+            }
             return book.populate('author')
         },
         editAuthor: async (root, args) => {
@@ -104,8 +126,19 @@ const resolvers = {
 
             authorToUpdate.born = setBornTo
             
+            try {
+                await authorToUpdate.save()
+            } catch (error) {
+                throw new GraphQLError('Updated Author Failed', {
+                    extensions: {
+                        code: 'BAD_USER_INPUT',
+                        invalidArgs: args,
+                        error
+                    }
+                })
+            }
 
-            return authorToUpdate.save()
+            return authorToUpdate
         }
     },
     Author: {
