@@ -22,6 +22,7 @@ const LoginForm = ({ notify, setToken, errorMessage }) => {
             localStorage.setItem('libraryAppUser', token)
             navigate('/')
         }
+    // eslint-disable-next-line
     }, [result.data])
 
     const handleSubmit = event => {
