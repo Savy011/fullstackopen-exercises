@@ -5,6 +5,7 @@ import NewBook from './components/NewBook'
 import { useState } from 'react'
 import LoginForm from './components/LoginForm'
 import { useApolloClient } from '@apollo/client'
+import Recommend from './components/Recommended'
 
 const App = () => {
     const [token, setToken ] = useState(null)
@@ -44,6 +45,7 @@ const App = () => {
                 <Link style={padding} to='/'>Authors</Link>
                 <Link style={padding} to='/books'>Books</Link>
                 {token ? <Link style={padding} to='/add-book'>Add Book</Link> : null}
+                {token ? <Link style={padding} to='/recommend'>Recommend</Link> : null}
                 <Login />
             </div>
 
@@ -53,6 +55,7 @@ const App = () => {
                 <Route path='/authors' element={ <Navigate replace to='/' />} />
                 <Route path='/books' element={<Books />}/>
                 <Route path='/add-book' element={token ? <NewBook /> : <Navigate replace to='/login'/> }/>
+                <Route path='/recommend' element={token ? <Recommend /> : <Navigate replace to='/login'/> }/>
             </Routes>
         </div>
     )
