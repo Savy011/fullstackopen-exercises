@@ -10,12 +10,6 @@ const BirthYearForm = ({ authors }) => {
         refetchQueries: [ { query: ALL_AUTHORS }]
     }) 
 
-    const handleSelect = event => {
-        event.preventDefault()
-
-        console.log(event.target.value)
-    }
-
     const handleSubmit = event => {
         event.preventDefault()
 
@@ -35,7 +29,7 @@ const BirthYearForm = ({ authors }) => {
                 <p>
                     Name:&nbsp;
                     <select onChange={e => setSelectedAuthor(e.target.value)} defaultValue={'DEFAULT'}>
-                        <option disabled value='DEFAULT'> -- select an option -- </option>
+                        <option disabled value='DEFAULT'> -- Select an Author -- </option>
                         {authors.map(a => (
                             <option key={a.name} value={a.name}>{a.name}</option>
                         ))}

@@ -2,11 +2,40 @@ import { Routes, Route, Link, Navigate } from 'react-router-dom'
 import Authors from './components/Authors'
 import Books from './components/Books'
 import NewBook from './components/NewBook'
+import { useState } from 'react'
+import LoginForm from './components/LoginForm'
+import { useApolloClient } from '@apollo/client'
 
 const App = () => {
+    const [token, setToken ] = useState(null)
+    const [errorMessage, setErrorMessage] = useState(null)
+    const client = useApolloClient()
 
     const padding = {
         paddingRight: 5
+    }
+
+    const logout = () => {
+        setToken(null)
+        localStorage.clear()
+        client.resetStore()
+    }
+
+    const notify = (message) => {
+        setErrorMessage(message)
+        setTimeout(() => {
+            setErrorMessage(null)
+        }, 10000)
+    }
+
+    const Login = () => {
+        if (token) {
+            return (
+                <>
+                    <button style={padding} onClick={logout}>Log out</button>
+                </>
+            )
+        } else return <Link style={padding} to='/login'>Login</Link>
     }
 
     return (
@@ -14,14 +43,16 @@ const App = () => {
             <div>
                 <Link style={padding} to='/'>Authors</Link>
                 <Link style={padding} to='/books'>Books</Link>
-                <Link style={padding} to='/add-book'>Add Book</Link>
+                {token ? <Link style={padding} to='/add-book'>Add Book</Link> : null}
+                <Login />
             </div>
 
             <Routes>
-                <Route path='/' element={<Authors />}/>
+                <Route path='/login' element={<LoginForm setToken={setToken} notify={notify} errorMessage={errorMessage} />} />
+                <Route path='/' element={<Authors token={token}/>}/>
                 <Route path='/authors' element={ <Navigate replace to='/' />} />
                 <Route path='/books' element={<Books />}/>
-                <Route path='/add-book' element={<NewBook />}/>
+                <Route path='/add-book' element={token ? <NewBook /> : <Navigate replace to='/login'/> }/>
             </Routes>
         </div>
     )
