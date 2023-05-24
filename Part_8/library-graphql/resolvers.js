@@ -38,8 +38,8 @@ const resolvers = {
             const authors = await Author.find({})
             return authors
         },
-        me: (root, context) => {
-            return context.currentUser
+        me: (root, args, context) => {
+			return context.currentUser
         }
     },
     Mutation: {

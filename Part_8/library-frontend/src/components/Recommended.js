@@ -4,15 +4,15 @@ import { ALL_BOOKS, ME } from '../queries'
 const Recommend = () => {
     const result = useQuery(ME)
     const bookResult = useQuery(ALL_BOOKS)
-    
+
     if (result.loading || bookResult.loading) {
         return <div>Loading Data...</div>
     }
 
     const user = result.data.me
-    const userBooks = bookResult.data.allBooks.filter(book => book.genres.includes(user.favouriteGenre))
+	const userBooks = bookResult.data.allBooks.filter(book => book.genres.includes(user.favouriteGenre))
     
-    if (!user) {
+    if (!user || !userBooks) {
         return <div>Data Not Available...</div>
     }
     return (

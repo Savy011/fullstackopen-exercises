@@ -70,7 +70,7 @@ const start = async () => {
 				if (auth && auth.startsWith('Bearer ')) {
 					const decodedToken = jwt.verify(auth.substring(7), JWT_SECRET)
 					const currentUser = await User.findById(decodedToken.id)
-
+					
 					return { currentUser }
 				}
 			},
