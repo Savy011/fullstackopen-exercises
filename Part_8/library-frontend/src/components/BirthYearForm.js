@@ -4,7 +4,7 @@ import { ALL_AUTHORS, UPDATE_AUTHOR } from '../queries'
 
 const BirthYearForm = ({ authors }) => {
     const [selectedAuthor, setSelectedAuthor] = useState(null)
-    const [birthyear, setBirthYear] = useState(null)
+    const [birthyear, setBirthYear] = useState('')
 
     const [ editAuthor ] = useMutation(UPDATE_AUTHOR, {
         refetchQueries: [ { query: ALL_AUTHORS }]
@@ -17,9 +17,9 @@ const BirthYearForm = ({ authors }) => {
             name: selectedAuthor,
             born: parseInt(birthyear)
         } })
-        console.log('Author Name:', selectedAuthor)
-        console.log('Birth Year:', birthyear)
-    }
+		setSelectedAuthor('DEFAULT')
+		setBirthYear('')
+	}
 
     return (
         <div>
@@ -28,7 +28,7 @@ const BirthYearForm = ({ authors }) => {
                 <form onSubmit={handleSubmit}>
                 <p>
                     Name:&nbsp;
-                    <select onChange={e => setSelectedAuthor(e.target.value)} defaultValue={'DEFAULT'}>
+                    <select required onChange={e => setSelectedAuthor(e.target.value)} defaultValue={'DEFAULT'}>
                         <option disabled value='DEFAULT'> -- Select an Author -- </option>
                         {authors.map(a => (
                             <option key={a.name} value={a.name}>{a.name}</option>
@@ -37,7 +37,7 @@ const BirthYearForm = ({ authors }) => {
                 </p>
                 <p>
                     Birth Year:&nbsp;
-                    <input type="number" onChange={e => setBirthYear(e.target.value)}/>
+                    <input required type="number" value={birthyear} onChange={e => setBirthYear(e.target.value)}/>
                 </p>
                 <p><button type="submit">Update Author</button></p>
                 </form>

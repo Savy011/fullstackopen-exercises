@@ -29,8 +29,8 @@ const Books = () => {
     return (
         <div>
         <h2>Books</h2>
-        
-        <div>
+
+        <div className='filter'>
             <form onSubmit={handleFilter}>
                 Genre Filter:&nbsp;
                 <select name='filterMenu'>
@@ -48,14 +48,14 @@ const Books = () => {
             <tbody>
             <tr>
                 <th></th>
-                <th>author</th>
-                <th>published</th>
+                <th>Author</th>
+                <th>Published</th>
             </tr>
                 {booksToMap.map((a) => (
                     <tr key={a.title}>
                     <td>{a.title}</td>
                     <td>{a.author.name}</td>
-                    <td>{a.published}</td>
+                    <td className='yearTd' >{a.published}</td>
                     </tr>
                 ))}
             </tbody>

@@ -4,8 +4,9 @@ import Books from './components/Books'
 import NewBook from './components/NewBook'
 import { useState } from 'react'
 import LoginForm from './components/LoginForm'
-import { useApolloClient } from '@apollo/client'
+import { useApolloClient, useSubscription } from '@apollo/client'
 import Recommend from './components/Recommended'
+import { BOOK_ADDED } from './queries'
 
 const App = () => {
     const [token, setToken ] = useState(null)
@@ -15,6 +16,13 @@ const App = () => {
     const padding = {
         paddingRight: 5
     }
+	
+	useSubscription(BOOK_ADDED, {
+		onData: ({ data }) => {
+			const book = data.data.bookAdded
+			window.alert(`Book Added: ${book.title} by ${book.author.name}`)
+		}
+	})
 
     const logout = () => {
         setToken(null)

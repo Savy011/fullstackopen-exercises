@@ -1,0 +1,17 @@
+.filter { margin-bottom: 10px }
+
+table { border-collapse: collapse }
+
+th {
+	color: #333;
+	background-color: #FFD076;
+}
+
+td, th {
+	border-bottom: 1px solid #ddd;
+	padding: 5px
+}
+
+tr:hover { background-color: #97E0CF }
+
+.yearTd { text-align: center }
