@@ -20,6 +20,10 @@ const resolvers = {
                 return Book.find({ author: queriedAuthor.id, genres: { $in: [args.genre] } }).populate('author')
             }
 
+			if (args.genre) {
+				return Book.find({ genres: { $in: [args.genre] } }).populate('author')
+				}
+
             if (args.author) {
                 const queriedAuthor = await Author.findOne({ name: args.author })
 
@@ -32,7 +36,6 @@ const resolvers = {
         },
         allAuthors: async () => {
             const authors = await Author.find({})
-
             return authors
         },
         me: (root, context) => {
@@ -84,6 +87,7 @@ const resolvers = {
 			}
 
 			const subBook = book.populate('author')
+			console.log('Book.find')
 
 			await pubsub.publish('BOOK_ADDED', { bookAdded: subBook })
 
@@ -158,7 +162,7 @@ const resolvers = {
     },
     Author: {
         bookCount: async (root) => {
-            const foundAuthor = await Author.findOne({ name: root.name })
+			const foundAuthor = await Author.findOne({ name: root.name })
             const booksByAuthor = await Book.find({ author: foundAuthor.id })
             return booksByAuthor.length 
         }
