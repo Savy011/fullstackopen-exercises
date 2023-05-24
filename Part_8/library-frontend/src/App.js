@@ -8,7 +8,7 @@ import { useApolloClient, useSubscription } from '@apollo/client'
 import Recommend from './components/Recommended'
 import { ALL_BOOKS, BOOK_ADDED } from './queries'
 
-export const updateCache = (cache, query, addedBook) => {
+const updateCache = (cache, query, addedBook) => {
 	const uniqById = a => {
 		let seen = new Set()
 		return a.filter(item => {

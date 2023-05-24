@@ -1,6 +1,7 @@
-import { ApolloConsumer, useQuery } from '@apollo/client'
+import { ApolloConsumer, useQuery, useSubscription } from '@apollo/client'
 import { union } from 'lodash'
 import { ALL_BOOKS } from '../queries'
+import { BOOK_ADDED } from '../queries.js'
 import { useState } from 'react'
 import { useEffect } from 'react'
 
@@ -16,7 +17,7 @@ const Books = () => {
 	const result = useQuery(ALL_BOOKS, {
 		variables: { genre: selectedGenre }
 	})
-		
+
 	useEffect(() => {
 		if (result.data) {
 			const allBookGenres = getAllGenres(result.data.allBooks)
@@ -29,6 +30,17 @@ const Books = () => {
 			setBooks(result.data.allBooks)
 		}
 	}, [result.data])
+
+	useSubscription(BOOK_ADDED, {
+    onData: ({ data }) => {
+		  const addedBook = data.data.bookAdded
+		  setBooks((prevBooks) => {
+			const updatedBooks = prevBooks.concat(addedBook)
+			return selectedGenre ? updatedBooks.filter((book) => book.genres.includes(selectedGenre)) : updatedBooks
+		  })
+		},
+	  })
+
 
     if (result.loading) {
         return <div>Loading Data...</div>
