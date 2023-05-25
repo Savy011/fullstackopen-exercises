@@ -13,11 +13,11 @@ const parseArgs = (args: string[]): bmiValues => {
 		return {
 			height: Number(args[2]),
 			weight: Number(args[3])
-		}
+		};
 	} else {
-		throw new Error('Provided Values are not Numbers')
+		throw new Error('Provided Values are not Numbers');
 	}
-}
+};
 
 const calculateBmi = (height: number, weight: number): string => {
 	const bmi: number = (weight / (height * height)) * 10000;
@@ -40,11 +40,11 @@ const calculateBmi = (height: number, weight: number): string => {
 	} else {
 		throw new Error('Error occured while calculating BMI');
 	}
-}
+};
 
 try {
 	const { height, weight } = parseArgs(process.argv);
 	console.log(calculateBmi(height, weight));
 } catch (error) {
-	errorhandler(error)
+	errorhandler(error);
 }

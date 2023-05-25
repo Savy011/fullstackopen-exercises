@@ -25,11 +25,11 @@ const parseArguments = (args: string[]) => {
 		return {
 			exerciseHours: exerciseHours,
 			target: target
-		}
+		};
 	} else {
 		throw new Error('Arguments were not of the expected type');
 	}
-}
+};
 
 const calculateExercises = (exHours: number[], target: number): ExerciseValue => {
 	const periodLength = exHours.length;
@@ -48,7 +48,7 @@ const calculateExercises = (exHours: number[], target: number): ExerciseValue =>
 		ratingDescription = 'Impressive work!';
 	} else if (target < average) {
 		rating = 3;
-		ratingDescription = 'Woah! You did pretty good!'
+		ratingDescription = 'Woah! You did pretty good!';
 	}
 
 	return {
@@ -59,13 +59,13 @@ const calculateExercises = (exHours: number[], target: number): ExerciseValue =>
 		success,
 		rating,
 		ratingDescription,
-	}
-}
+	};
+};
 
 try {
 	const args = parseArguments(process.argv);
-	console.log(args)
+	console.log(args);
 	console.log(calculateExercises(args.exerciseHours, args.target));
 } catch (error) {
-	errorhandler(error)
+	errorhandler(error);
 }

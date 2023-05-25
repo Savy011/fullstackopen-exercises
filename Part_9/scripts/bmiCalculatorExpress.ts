@@ -25,5 +25,5 @@ export const calculateBmi = (height: number, weight: number): bmiOutput => {
 		throw new Error('Error occured while calculating BMI');
 	}
 
-	return { bmi: Number(bmi.toFixed(2)), bmiRemark }
-}
+	return { bmi: Number(bmi.toFixed(2)), bmiRemark };
+};
