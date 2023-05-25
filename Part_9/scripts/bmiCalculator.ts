@@ -1,3 +1,5 @@
+import { errorhandler } from './utils';
+
 interface bmiValues {
 	height: number,
 	weight: number
@@ -44,10 +46,5 @@ try {
 	const { height, weight } = parseArgs(process.argv);
 	console.log(calculateBmi(height, weight));
 } catch (error) {
-	let errorMessage = 'Something Wrong Happened!'
-	if (error instanceof Error) {
-		errorMessage += '\nError: ' + error.message
-	}
-
-	console.log(errorMessage)
+	errorhandler(error)
 }
