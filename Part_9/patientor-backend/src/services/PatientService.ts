@@ -17,7 +17,7 @@ const addPatient = (patientDetails: NewPatient):Patient => {
 	const newPatient = {
 		id: uuid(),
 		...patientDetails
-	}
+	};
 
 	patients.push(newPatient);
 	return newPatient;
@@ -26,4 +26,4 @@ const addPatient = (patientDetails: NewPatient):Patient => {
 export default {
 	getAllPatients,
 	addPatient
-}
+};

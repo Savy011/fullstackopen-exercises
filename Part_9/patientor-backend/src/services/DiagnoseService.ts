@@ -10,4 +10,4 @@ const getAllDiagnoses = (): Diagnose[] => {
 	}));
 };
 
-export default { getAllDiagnoses }
+export default { getAllDiagnoses };
