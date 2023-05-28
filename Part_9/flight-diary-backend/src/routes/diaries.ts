@@ -13,13 +13,13 @@ router.post('/', (req, res) => {
 		const newDiaryEntry = toNewDiary(req.body);
 
 		const addedEntry = diaryService.addDiary(newDiaryEntry);
-		res.json(addedEntry);
+		return res.json(addedEntry);
 	} catch (error) {
 		let errorMessage = 'Somethign Went Wrong';
 		if (error instanceof Error) {
 			errorMessage += ' Error: ' + error.message;
 		}
-		res.send(400).send(errorMessage);
+		return res.send(400).send(errorMessage);
 	}
 });
 
