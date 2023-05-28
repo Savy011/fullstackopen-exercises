@@ -33,7 +33,7 @@ const data = [
 ];
 
 const diaryEntries: DiaryEntry[] = data.map(obj => {
-	const object = toNewDiaryEntry(obj) as DiaryEntry;
+	const object = toNewDiaryEntry(obj) ;
 	object.id = obj.id;
 	return object;
 });

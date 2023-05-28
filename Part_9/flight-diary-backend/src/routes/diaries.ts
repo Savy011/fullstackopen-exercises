@@ -1,5 +1,6 @@
 import express from 'express';
 import diaryService from '../services/diaryService';
+import { DiaryEntry, NewDiaryEntry } from '../types';
 
 const router = express.Router();
 
@@ -9,7 +10,7 @@ router.get('/', (_req, res) => {
 
 router.post('/', (req, res) => {
 	try {
-		const addedEntry = diaryService.addDiary(req.body);
+		const addedEntry: DiaryEntry = diaryService.addDiary(req.body as NewDiaryEntry);
 		return res.json(addedEntry);
 	} catch (error) {
 		let errorMessage = 'Something Went Wrong.';

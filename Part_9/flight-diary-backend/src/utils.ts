@@ -22,11 +22,11 @@ const toNewDiary = (object: unknown): DiaryEntry => {
 
 const parseNumber = (id: unknown): number => {
 	if (!isNumber(id)) {
-		throw new Error('Incorrect or Missing ID')
+		throw new Error('Incorrect or Missing ID');
 	}
 
-	return id
-}
+	return id;
+};
 
 const parseComment = (comment: unknown): string => {
 	if (!isString(comment)) {
@@ -61,8 +61,8 @@ const parseVisibility = (visibility: unknown): Visibility => {
 };
 
 const isNumber = (number: unknown): number is number => {
-	return typeof number === 'number'
-}
+	return typeof number === 'number';
+};
 
 const isString = (text: unknown): text is string => {
 	return typeof text === 'string' || text instanceof String;
