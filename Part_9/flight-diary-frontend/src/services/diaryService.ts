@@ -10,7 +10,15 @@ export const getAll = async () => {
 }
 
 export const postEntry = async (entryObject: NewDiaryEntry) => {
-	const response = await axios.post<DiaryEntry>(baseUrl, entryObject)
+	try {
+		const response = await axios.post<DiaryEntry>(baseUrl, entryObject)
 
-	return response.data
+		return response.data
+	} catch (error: unknown) {
+		if (axios.isAxiosError(error)) {
+			return error
+		} else {
+			return error as Error
+		}
+	}
 }

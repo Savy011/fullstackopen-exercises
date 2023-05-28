@@ -21,4 +21,9 @@ export interface DiaryEntry {
 	comment?: string;
 }
 
-export type NewDiaryEntry = Omit<DiaryEntry, "id">
+export interface NewDiaryEntry {
+	date: string;
+	weather: string;
+	visibility: string;
+	comment?: string;
+}

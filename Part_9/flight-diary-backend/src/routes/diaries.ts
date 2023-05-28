@@ -1,6 +1,5 @@
 import express from 'express';
 import diaryService from '../services/diaryService';
-import toNewDiary from '../utils';
 
 const router = express.Router();
 
@@ -10,16 +9,14 @@ router.get('/', (_req, res) => {
 
 router.post('/', (req, res) => {
 	try {
-		const newDiaryEntry = toNewDiary(req.body);
-
-		const addedEntry = diaryService.addDiary(newDiaryEntry);
+		const addedEntry = diaryService.addDiary(req.body);
 		return res.json(addedEntry);
 	} catch (error) {
-		let errorMessage = 'Somethign Went Wrong';
+		let errorMessage = 'Something Went Wrong.';
 		if (error instanceof Error) {
 			errorMessage += ' Error: ' + error.message;
 		}
-		return res.send(400).send(errorMessage);
+		return res.status(400).json({ error: errorMessage });
 	}
 });
 
