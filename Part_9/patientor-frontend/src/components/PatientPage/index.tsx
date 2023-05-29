@@ -1,21 +1,22 @@
 import { Typography } from '@mui/material';
-import axios from 'axios';
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import GenderIcon from '../PatientListPage/GenderIcon';
-import EntryData from '../PatientListPage/EntryData';
-import { apiBaseUrl } from '../../constants';
+import GenderIcon from './GenderIcon';
+import EntryData from './EntryData';
+import patientService from '../../services/patients';
 import { Patient } from '../../types';
 
 const PatientPage = () => {
-	const [patient, setPatient] = useState<Patient | null>(null)
-	const id = useParams().id
+	const [patient, setPatient] = useState<Patient | null>(null);
+	const id = useParams().id;
 	
 	useEffect(() => {
-		axios.get(`${apiBaseUrl}/patients/${id}`).then(patient => {
-			setPatient(patient?.data)
-			console.log(patient?.data)
-		})
+		const fetchPatientDetails = async () => {
+			const recievedDetails = await patientService.getPatientData(id as string);
+			setPatient(recievedDetails);
+		}
+		
+		void fetchPatientDetails()
 	}, [id])
 		
 	if (!patient) return <div>Loading...</div>
