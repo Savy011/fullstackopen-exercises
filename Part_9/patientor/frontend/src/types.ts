@@ -71,3 +71,20 @@ export interface Patient {
 }
 
 export type PatientFormValues = Omit<Patient, "id" | "entries">;
+
+export type EntryFormValues = {
+	description: string;
+	date: string;
+	specialist: string;
+	diagnosisCodes?: string;
+	type: string;
+	healthCheckRating?: Number;
+	discharge?: {
+		date: string;
+		criteria: string;
+	};
+	sickLeave?: {
+		startDate: string;
+		endDate: string;
+	}
+}
