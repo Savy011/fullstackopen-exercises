@@ -1,144 +1,22 @@
-import { Button, FormControl, FormControlLabel, FormLabel, Grid, MenuItem, Radio, RadioGroup, TextField } from "@mui/material";
-import { useState } from "react";
-import { EntryFormValues, EntryType, HealthCheckRating } from "../../types";
+import { Button, FormControl, Grid, InputLabel, MenuItem, TextField, Select, OutlinedInput, SelectChangeEvent  } from "@mui/material";
+import { useState, useEffect } from "react";
+import { Diagnose, EntryFormValues, EntryType } from "../../types";
+import DiagnoseService from '../../services/diagnose'
+import OccupationalHealthcareForm from "./OccupationalHealthcareForm";
+import HealthCheckForm from "./HealthCheckForm";
+import HospitalForm from "./HospitalForm";
 
 interface Props {
 	onClose: () => void
 	onSubmit: (values: EntryFormValues) => void
 }
 
-const OccupationalHealthcareForm = ({
-	style,
-	employerName,
-	startDate,
-	endDate,
-	setEmployerName,
-	setStartDate,
-	setEndDate,
-}: {
-	style: React.CSSProperties
-	employerName: string,
-	startDate: string,
-	endDate: string,
-	setEmployerName: React.Dispatch<React.SetStateAction<string>>,
-	setStartDate: React.Dispatch<React.SetStateAction<string>>
-	setEndDate: React.Dispatch<React.SetStateAction<string>>
-}) => {
-	return (
-		<>
-			<FormControl sx={{ width: '100%', m: 'none' }}>
-				<div style={style}>
-					<TextField
-					fullWidth
-					label="Employer Name"
-					value={employerName}
-					onChange={e => setEmployerName(e.target.value)}
-					/>
-				</div>
-				<FormLabel sx={{ ml: 1 }}>Sick Leave</FormLabel>
-				<div style={style}>
-					<TextField
-						fullWidth
-						label="Start Date"
-						value={startDate}
-						onChange={e => setStartDate(e.target.value)}
-					/>
-				</div>
-				<div style={style}>
-					<TextField
-						fullWidth
-						label="End Date"
-						value={endDate}
-						onChange={e => setEndDate(e.target.value)}
-					/>
-				</div>
-			</FormControl>
-		</>
-	)
-}
-
-const HealthCheckForm = ({
-	style,
-	radioValue,
-	setRadioValue
-}: {
-	style: React.CSSProperties,
-	radioValue: string,
-	setRadioValue: React.Dispatch<React.SetStateAction<string>>
-}) => {
-	return (
-		<>
-			<FormControl style={style}>
-				<FormLabel>Health Check Rating</FormLabel>
-				<RadioGroup
-					row
-					value={radioValue} onChange={e => setRadioValue(e.target.value)}
-				>
-					<FormControlLabel
-						value={HealthCheckRating.Healthy}
-						control={<Radio />}
-						label="Healthy"
-					/>
-					<FormControlLabel
-						value={HealthCheckRating.LowRisk}
-						control={<Radio />}
-						label="Low Risk"
-					/>
-					<FormControlLabel
-						value={HealthCheckRating.HighRisk}
-						control={<Radio />}
-						label="High Risk"
-					/>
-					<FormControlLabel
-						value={HealthCheckRating.CriticalRisk}
-						control={<Radio />}
-						label="Critical Risk"
-					/>
-				</RadioGroup>
-			</FormControl>
-		</>
-	)
-}
-
-const HospitalForm = ({
-	style,
-	dischargeDate,
-	dischargeCriteria,
-	setDischargeDate,
-	setDischargeCriteria
-}: {
-	style: React.CSSProperties,
-	dischargeDate: string,
-	dischargeCriteria: string,
-	setDischargeDate: React.Dispatch<React.SetStateAction<string>>,
-	setDischargeCriteria: React.Dispatch<React.SetStateAction<string>>
-}) => {
-	return (
-		<FormControl>
-			<FormLabel sx={{ mt: 2 }} >Discharge</FormLabel>
-			<div style={style}>
-			<TextField
-				label="Discharge Date"
-				value={dischargeDate}
-				onChange={e => setDischargeDate(e.target.value)}
-			/>
-			</div>
-			<div style={style}>
-				<TextField
-					label="Discharge Criteria"
-					value={dischargeCriteria}
-					onChange={e => setDischargeCriteria(e.target.value)}
-				/>
-			</div>
-		</FormControl>
-	)
-}
-
 const AddPatientForm = ({ onClose, onSubmit }: Props) => {
 	const [date, setDate] = useState('')
 	const [description, setDescription] = useState('')
 	const [specialist, setSpecialist] = useState('')
-	const [diagnosisCodes, setDiagnosisCodes] = useState('')
+	const [diagnosisCodes, setDiagnosisCodes] = useState<Array<string>>([])
+	const [FetchedDiagnosisCodes, setFetchedDiagnosisCodes] = useState<Diagnose[]>([])
 	const [entryType, setEntryType] = useState('')
 	const [radioValue, setRadioValue] = useState('')
 	const [dischargeDate, setDischargeDate] = useState('')
@@ -147,10 +25,27 @@ const AddPatientForm = ({ onClose, onSubmit }: Props) => {
 	const [startDate, setStartDate] = useState('')
 	const [endDate, setEndDate] = useState('')
 
-	
+	useEffect(() => {
+		const fetchCodes = async () => {
+			const codes = await DiagnoseService.getAllDiagnose()
+			setFetchedDiagnosisCodes(codes)
+		}
+		
+		void fetchCodes()
+	}, [])
+
 	const style: React.CSSProperties = {
 		margin: 10
 	}
+	
+	const handleChange = (event:  SelectChangeEvent<typeof diagnosisCodes>) => {
+		const {
+		  target: { value },
+		} = event;
+		setDiagnosisCodes(
+			typeof value === 'string' ? value.split(',') : value,
+		);
+	};
 	
 	const addEntry = (event: React.SyntheticEvent) => {
 		event.preventDefault()
@@ -163,7 +58,6 @@ const AddPatientForm = ({ onClose, onSubmit }: Props) => {
 				type: entryType,
 				healthCheckRating: Number(radioValue),
 			}
-			console.log(object)
 			onSubmit(object)
 		} else if (entryType === EntryType.Hospital) {
 			const object = {
@@ -177,7 +71,6 @@ const AddPatientForm = ({ onClose, onSubmit }: Props) => {
 					criteria: dischargeCriteria
 				}
 			}
-			console.log(object)
 			onSubmit(object)
 		} else if (entryType === EntryType.OccupationalHealthcare) {
 			const object = {
@@ -192,8 +85,6 @@ const AddPatientForm = ({ onClose, onSubmit }: Props) => {
 					endDate
 				}
 			}
-
-			console.log(object)
 			onSubmit(object)
 		}
 	}
@@ -202,9 +93,11 @@ const AddPatientForm = ({ onClose, onSubmit }: Props) => {
 		<div>
 			<FormControl variant="outlined" sx={{width: '100%'}}>
 				<div style={style}>
+					<InputLabel sx={{ ml: 2 }}>Date</InputLabel>
 					<TextField
+						sx={{ paddingTop: 5 }}
 						fullWidth
-						label='Date'
+						type="date"
 						value={date}
 						onChange={e => setDate(e.target.value)}
 					/>
@@ -226,12 +119,25 @@ const AddPatientForm = ({ onClose, onSubmit }: Props) => {
 					/>
 				</div>
 				<div style={style}>
-					<TextField
-						fullWidth
-						label='Diagnosis Codes'
-						value={diagnosisCodes}
-						onChange={e => setDiagnosisCodes(e.target.value)}
-					/>
+					<FormControl sx={{width: '100%'}}>
+						<InputLabel id="test-select-label">Diagnose Codes</InputLabel>
+						<Select
+							multiple
+							fullWidth
+							value={diagnosisCodes}
+							onChange={handleChange}
+							input={<OutlinedInput label="Diagnosis Codes" />}
+						>
+							{FetchedDiagnosisCodes.map((code) => (
+								<MenuItem
+								key={code.name}
+								value={code.code}
+								>
+									{code.code}
+								</MenuItem>
+							))}
+						</Select>
+					</FormControl>
 				</div>
 				<div style={style} >
 					<TextField

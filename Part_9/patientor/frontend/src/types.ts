@@ -75,7 +75,7 @@ export type EntryFormValues = {
 	description: string;
 	date: string;
 	specialist: string;
-	diagnosisCodes?: string;
+	diagnosisCodes?: string[];
 	type: string;
 	healthCheckRating?: Number;
 	discharge?: {
