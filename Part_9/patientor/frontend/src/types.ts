@@ -59,7 +59,6 @@ export interface OccupationalHealthcareEntry extends BaseEntry {
 
 export type Entry = HospitalEntry | HealthCheckEntry | OccupationalHealthcareEntry
 
-
 export interface Patient {
 	id: string;
 	name: string;
@@ -83,6 +82,7 @@ export type EntryFormValues = {
 		date: string;
 		criteria: string;
 	};
+	employerName?: string;
 	sickLeave?: {
 		startDate: string;
 		endDate: string;
