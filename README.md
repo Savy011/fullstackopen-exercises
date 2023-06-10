@@ -1,4 +1,4 @@
-### My Submissions for FullStackOpen Course
+### FullStackOpen
 
 This is the submission repository for University of Helsinki's [Fullstack Open](https://fullstackopen.com/en/) Course.
 
